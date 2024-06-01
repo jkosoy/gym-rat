@@ -1,9 +1,17 @@
 import Image from "next/image";
 import styles from "./page.module.css";
+import { Suspense } from "react";
+import { isFirstRequest } from "./helpers/browser";
+import { WorkoutPicker } from "./components/workout-picker";
 
 export default function Home() {
+
   return (
     <main className={styles.main}>
+      <Suspense fallback={<div>Loading...</div>}>
+        <WorkoutPicker />
+      </Suspense>
+
       <div className={styles.description}>
         <p>
           Get started by editing&nbsp;
