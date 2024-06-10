@@ -1,0 +1,22 @@
+:root {
+  --color-background-recovery: #2FEBA6;
+  --color-background-active: #E50850;
+  --color-background-circuit-recovery: #EBDB2E;
+  --color-background-warmup: #9672FC;
+  --color-background-app: #9672FC;
+  --color-background: var(--color-background-app);
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--color-background);
+}

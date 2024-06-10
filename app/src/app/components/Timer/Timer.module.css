@@ -1,0 +1,12 @@
+.container {
+    background: red;
+    --percent-completed: 0;
+}
+
+.progressBar::after {
+    background: lime;
+}
+
+.time {
+    background: blue;
+}

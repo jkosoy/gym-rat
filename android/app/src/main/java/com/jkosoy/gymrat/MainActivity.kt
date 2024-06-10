@@ -15,6 +15,7 @@ import com.jkosoy.gymrat.ui.theme.GymRatTheme
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.window.OnBackInvokedDispatcher
 
 class MainActivity : ComponentActivity() {
     @SuppressLint("SetJavaScriptEnabled")
@@ -32,6 +33,8 @@ class MainActivity : ComponentActivity() {
         setContentView(R.layout.activity_main)
         loadPage()
     }
+
+    // handle and forward on arrow clicks
 
     override fun onPause() {
         super.onPause()

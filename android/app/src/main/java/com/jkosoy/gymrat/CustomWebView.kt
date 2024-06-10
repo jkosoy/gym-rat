@@ -2,10 +2,9 @@ package com.example.webviewapp.com.jkosoy.gymrat
 
 import android.content.Context
 import android.util.AttributeSet
-import android.view.MotionEvent
 import android.webkit.WebView
 
-class NoScrollWebView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : WebView(context, attrs, defStyleAttr) {
+class CustomWebView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : WebView(context, attrs, defStyleAttr) {
     constructor(context: Context) : this(context, null, 0)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
 
