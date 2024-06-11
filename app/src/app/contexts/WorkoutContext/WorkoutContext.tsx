@@ -33,7 +33,7 @@ export function WorkoutProvider({workout, children}: PropsWithChildren<WorkoutPr
   const [circuitIndex, setCircuitIndex] = useState(-1)
   const [moveIndex, setMoveIndex] = useState(-1)
   const [setIndex, setSetIndex] = useState(-1)
-  const [isPaused, setIsPaused] = useState(false)
+  const [isPaused, setIsPaused] = useState(true)
 
   // convenience methods
   const pause = () => { 
@@ -66,7 +66,9 @@ export function WorkoutProvider({workout, children}: PropsWithChildren<WorkoutPr
       setCurrentTime(currentTime+1)
     }, 1000)
 
-    return clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+    }
 
   }, [isPaused])
 

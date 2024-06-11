@@ -1,7 +1,7 @@
 import { formatTime } from "@/app/helpers/time";
-import classNames from "classnames";
-import { useMemo } from "react";
+import { PropsWithoutRef, useMemo } from "react";
 import styles from './Timer.module.css';
+import classNames from "classnames/bind";
 
 export interface TimerProps {
     style: "current" | "remaining" | "bar",
@@ -9,8 +9,8 @@ export interface TimerProps {
     totalTime: number
 }
 
-export function Timer({style, currentTime, totalTime}:TimerProps) {
-    const percentCompleted = (currentTime/totalTime);
+export function Timer({style, currentTime, totalTime}:PropsWithoutRef<TimerProps>) {
+    const percentCompleted = (currentTime/totalTime) || 1;
 
     const displayTime = useMemo(() => {
         if(style === "bar") {

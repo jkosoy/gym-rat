@@ -36,8 +36,8 @@ export const tempWorkout = {
           activeSeconds: 50,
           recoverySeconds: 10,
           moves: [
-            { name: 'Plank jacks', equipment: '', reps: 10 },
-            { name: 'Plank w shoulder taps', equipment: '', reps: 20 }
+            { name: 'Plank jacks', equipment: '' },
+            { name: 'Plank w shoulder taps', equipment: '' }
           ]
         },
         {

@@ -1,10 +1,21 @@
 :root {
-  --color-background-recovery: #2FEBA6;
+  --color-background-recovery: #2BD0FC;
   --color-background-active: #E50850;
-  --color-background-circuit-recovery: #EBDB2E;
-  --color-background-warmup: #9672FC;
-  --color-background-app: #9672FC;
-  --color-background: var(--color-background-app);
+  --color-background-circuit-recovery: #CDBD14;
+  --color-background-default: #9672FC;
+  --color-background: var(--color-background-default);
+
+  --font-family: var(--font-dm-sans);
+  --font-weight-light: 200;
+  --font-weight-normal: 400;
+  --font-weight-bold: 900;
+  --font-size-normal: 18px;
+  --font-color: white;
+  --border-radius: 10px;
+
+  --layer-top: 1000;
+  --layer-middle: 100;
+  --layer-bottom: 1;
 }
 
 * {
@@ -19,4 +30,9 @@ body {
   height: 100vh;
   overflow: hidden;
   background: var(--color-background);
+  transition: background 500ms linear;
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-normal);
+  font-size: var(--font-size-normal);
+  color: var(--font-color);
 }
