@@ -79,7 +79,7 @@ export function WorkoutProvider({workout, children}: PropsWithChildren<WorkoutPr
       clearInterval(interval);
     }
 
-  }, [isPaused])
+  }, [isPaused, currentTime, status, totalTime])
 
   return (<WorkoutContext.Provider 
     value={{

@@ -4,4 +4,4 @@ export type Workout = {
     name: string,
     circuits: Circuit[],
     recoverySeconds: number
-}}
+}

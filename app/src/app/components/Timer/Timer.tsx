@@ -22,7 +22,7 @@ export function Timer({style, currentTime, totalTime}:PropsWithoutRef<TimerProps
         }
 
         return formatTime(totalTime - currentTime);
-    }, [style, currentTime, totalTime]);
+    }, [style, currentTime, totalTime, percentCompleted]);
 
     const classes = classNames.bind(styles)({
         container: true,
