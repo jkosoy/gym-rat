@@ -1,7 +1,7 @@
 import { Fragment, useMemo } from "react";
 
 import { useWorkout } from "@/app/hooks/useWorkout";
-import styles from './Timeline.module.css';
+import styles from './TimelinePane.module.css';
 import { useEffect, useRef } from "react";
 import classNames from "classnames/bind";
 import { formatTime } from "@/app/helpers/time";
@@ -10,13 +10,13 @@ import { TimelineInfoCell } from "@/app/components/TimelineInfoCell";
 import { Move } from "@/app/components/Move";
 import { Timer } from "../Timer/Timer";
 
-export function Timeline() {
+export function TimelinePane() {
     const { workout, currentTime, totalTime } = useWorkout()
     const scrollEl = useRef<HTMLDivElement>(null);
 
     const timelineElements = useMemo(() => {
         return workout.circuits.flatMap((circuit, i) => {
-            if(circuit.name === 'Warmup' || circuit.name === 'Cooldown') {
+            if(["Warmup", "Cooldown"].includes(circuit.name)) {        
                 const className = classNames.bind(styles)({
                     sticky: true,
                     noSets: true

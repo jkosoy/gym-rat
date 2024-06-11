@@ -1,16 +1,26 @@
 .container {
     display:flex;
-    flex:1 1 auto;
     gap: 5px;
 }
 
+.container.focused {
+    font-size: 28px;
+}
+
 .reps {
-    width: 9%;
+    flex:0 0 26px;
 }
 
 .label {
-    max-width: 75%;
+    flex:1 0 0;
+    max-width: 240px;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+
+.focused .label {
+    max-width: unset;
+    overflow: visible;
+    text-overflow: unset;
 }

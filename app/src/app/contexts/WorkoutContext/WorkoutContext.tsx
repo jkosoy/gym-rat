@@ -1,7 +1,7 @@
 "use client";
 
 import { Context, createContext, PropsWithChildren, useContext, useEffect, useState } from "react";
-import { Workout } from "@/app/types/Workout";
+import { Circuit, ExcerciseSet, Workout } from "@/app/types/Workout";
 
 type Status = 'active' | 'recovery' | 'warmup' | 'cooldown' | 'default';
 
@@ -15,13 +15,14 @@ type WorkoutContextProps = {
   currentTime: number,
   circuitIndex: number,
   setIndex: number,
-  moveIndex: number,
   status:Status,
   isPaused: boolean,
   pause: Function,
   play: Function,
   nextMove: Function,
   prevMove: Function,
+  getCurrentCircuit: Function
+  getCurrentSet: Function
 }
 
 export const WorkoutContext = createContext<WorkoutContextProps>({} as WorkoutContextProps)
@@ -30,9 +31,8 @@ export function WorkoutProvider({workout, children}: PropsWithChildren<WorkoutPr
   const [totalTime, setTotalTime] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
   const [status, setStatus] = useState<Status>('default')
-  const [circuitIndex, setCircuitIndex] = useState(-1)
-  const [moveIndex, setMoveIndex] = useState(-1)
-  const [setIndex, setSetIndex] = useState(-1)
+  const [circuitIndex, setCircuitIndex] = useState(0)
+  const [setIndex, setSetIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(true)
 
   // convenience methods
@@ -54,6 +54,15 @@ export function WorkoutProvider({workout, children}: PropsWithChildren<WorkoutPr
   
   const nextMove = () => {}
   const prevMove = () => {}
+
+  const getCurrentCircuit = ():Circuit => {
+    console.log(workout);
+    return workout.circuits[circuitIndex]
+  }
+
+  const getCurrentSet = ():ExcerciseSet => {
+    return getCurrentCircuit().sets[setIndex]
+  }
 
   // timer
   useEffect(() => {
@@ -79,13 +88,14 @@ export function WorkoutProvider({workout, children}: PropsWithChildren<WorkoutPr
       currentTime,
       circuitIndex,
       setIndex,
-      moveIndex,
       status,
       isPaused,
       pause,
       play,
       nextMove,
-      prevMove
+      prevMove,
+      getCurrentCircuit,
+      getCurrentSet
     }}>
       {children}
     </WorkoutContext.Provider>
