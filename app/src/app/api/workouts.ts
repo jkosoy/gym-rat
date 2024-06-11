@@ -128,31 +128,31 @@ export async function getRoutines(): Promise<Routine[]> {
     }
   ]
 
-  const rawRoutines = await notion.databases.query({
-    database_id: process.env.NOTION_DATABASE!,
-    sorts: [
-      {property: "Created", direction: "descending"}
-    ]
-  })
+  // const rawRoutines = await notion.databases.query({
+  //   database_id: process.env.NOTION_DATABASE!,
+  //   sorts: [
+  //     {property: "Created", direction: "descending"}
+  //   ]
+  // })
   
-  const routines = rawRoutines.results.map(page => {
-    try {
-      // @ts-ignore: routine is loaded
-      const name = page.properties["Name"].title[0].plain_text;
+  // const routines = rawRoutines.results.map(page => {
+  //   try {
+  //     // @ts-ignore: routine is loaded
+  //     const name = page.properties["Name"].title[0].plain_text;
 
-      // @ts-ignore: routine is loaded
-      const recoverySeconds = page.properties["Recovery"].number || 0;
+  //     // @ts-ignore: routine is loaded
+  //     const recoverySeconds = page.properties["Recovery"].number || 0;
 
-      return {
-        id: page.id,
-        name,
-        recoverySeconds
-      }      
-    }
-    catch(e) {
-      console.error(`Failed to load page:: ${page.id}`);
-    }
-  }).filter(routine => routine !== undefined);
+  //     return {
+  //       id: page.id,
+  //       name,
+  //       recoverySeconds
+  //     }      
+  //   }
+  //   catch(e) {
+  //     console.error(`Failed to load page:: ${page.id}`);
+  //   }
+  // }).filter(routine => routine !== undefined);
 
-  return routines;
+  // return routines;
 }
