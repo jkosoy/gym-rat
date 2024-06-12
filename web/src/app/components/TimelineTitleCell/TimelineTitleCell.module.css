@@ -1,8 +1,8 @@
 .container {
     position: sticky;
-    top: 58px;
+    top: calc(58px * var(--scale));
     /* margin: 8px 0 18px 4px; */
-    padding: 15px 4px;
+    padding: calc(15px * var(--scale)) calc(4px * var(--scale));
     display: grid;
     z-index: var(--layer-middle);
     background: var(--color-background);
@@ -11,7 +11,7 @@
 
 .container::after {
     width: 100%;
-    height: 2px;
+    height: calc(2px * var(--scale));
     content: '';
     display: block;
     position: absolute;
@@ -24,7 +24,7 @@
 .grid {
     display: grid;
     grid-template-columns: 8fr 1fr;
-    gap: 5px;
+    gap: calc(5px * var(--scale));
     font-size: calc(2.5rem * var(--scale));
     font-weight: var(--font-weight-bold);
 }
