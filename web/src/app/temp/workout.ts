@@ -1,4 +1,6 @@
-export const tempWorkout = {
+import { Workout } from "../types/Workout";
+
+export const tempWorkout:Workout = {
   name: 'Test Routine #1 ',
   circuits: [
     {
@@ -60,11 +62,11 @@ export const tempWorkout = {
     },
     {
       name: 'Circuit 2',
-      sets: [ { activeSeconds: 20, recoverySeconds: 10, moves: [{name: 'Circuit 2 has 10 seconds'}] } ]
+      sets: [ { activeSeconds: 20, recoverySeconds: 10, moves: [{name: 'Circuit 2 has 10 seconds', equipment: ''}] } ]
     },
     {
       name: 'Circuit 3',
-      sets: [ { activeSeconds: 20, recoverySeconds: 0, moves: [{name: 'No recovery'}] } ]
+      sets: [ { activeSeconds: 20, recoverySeconds: 0, moves: [{name: 'No recovery', equipment: ''}] } ]
     },
     {
       name: 'Cooldown',
