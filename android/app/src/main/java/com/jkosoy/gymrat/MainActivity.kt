@@ -25,6 +25,8 @@ class MainActivity : ComponentActivity() {
         webView.settings.useWideViewPort = true
         webView.settings.loadWithOverviewMode = true
         webView.settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.NORMAL
+        webView.settings.builtInZoomControls = false
+        webView.settings.displayZoomControls = false
         webView.webViewClient = WebViewClient()
         webView.setInitialScale(1)
         webView.loadUrl("https://gym-rat-tv.vercel.app/")
