@@ -30,11 +30,11 @@
 }
 
 
-@media screen and (min-width: 480px) {
+/* @media screen and (min-width: 480px) { */
     .container {
         height: unset;
     }
-}
+/* } */
 
 .container > div {
     flex: 0;
@@ -70,11 +70,11 @@
     font-weight: var(--font-weight-bold);
 }
 
-@media screen and (min-width: 480px) {
+/* @media screen and (min-width: 480px) { */
     .container .mainTimerContainer {
         font-size: 240px;
     }
-}
+/* } */
 
 .container .infoContainer {
     flex-grow: 3;
@@ -102,12 +102,12 @@
     padding: 0 24px;
 }
 
-@media screen and (min-width: 480px) {
+/* @media screen and (min-width: 480px) { */
     .progressBar {
         top: 48px;
         padding: 0 48px;
     }
-}
+/* } */
 
 .infoContainer::before,
 .infoContainer::after
@@ -135,11 +135,11 @@
 
 }
 
-@media screen and (min-width: 480px) {
+/* @media screen and (min-width: 480px) { */
     .moveContainer h2 {
         font-size: 32px;
     }
-}
+/* } */
 
 .moveContainer .moves {
     flex: 1 0 0;

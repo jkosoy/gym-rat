@@ -27,7 +27,9 @@ class MainActivity : ComponentActivity() {
         webView.settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.NORMAL
         webView.settings.builtInZoomControls = false
         webView.settings.displayZoomControls = false
+        webView.settings.domStorageEnabled = true
         webView.webViewClient = WebViewClient()
+        webView.clearCache(true)
         webView.setInitialScale(1)
         webView.loadUrl("https://gym-rat-tv.vercel.app/")
     }
