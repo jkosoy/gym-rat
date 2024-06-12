@@ -130,7 +130,7 @@
 }
 
 .moveContainer h2 {
-    font-weight: var(--font-weight-light);
+    font-weight: var(--font-weight-normal);
     font-size: 28px;
 
 }

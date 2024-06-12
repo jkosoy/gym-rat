@@ -19,7 +19,7 @@ export function ButtonWithIcon({icon, onClick=undefined}:PropsWithChildren<Butto
         onClick()
     }
 
-    const buttonEl = useMemo(() => {
+    const iconEl = useMemo(() => {
         if(icon === "play") {
             return <PlayIcon />
         }
@@ -43,7 +43,7 @@ export function ButtonWithIcon({icon, onClick=undefined}:PropsWithChildren<Butto
 
     return (
         <button className={styles.container} onClick={handleOnClick}>
-            {buttonEl}
+            {iconEl}
         </button>
     )
 }

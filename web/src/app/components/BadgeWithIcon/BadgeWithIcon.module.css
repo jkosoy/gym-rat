@@ -1,0 +1,13 @@
+.container {
+    background-color: transparent;
+    border: none;
+    height: 100%;
+    color: #fff;
+    display: flex;
+    place-items: center;
+}
+
+.container svg {
+    width: 100%;
+    height: auto;
+}
