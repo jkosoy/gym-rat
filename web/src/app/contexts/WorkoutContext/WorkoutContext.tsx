@@ -165,7 +165,7 @@ export function WorkoutProvider({workout, children}: PropsWithChildren<WorkoutPr
     }
 
     setStatus(getCurrentSet().recoverySeconds > 0 ? "recovery" : "active");
-  },[workout,circuitIndex,getCurrentCircuit,getCurrentSet,setIndex,status])
+  },[workout,circuitIndex,getCurrentSet,setIndex,status])
 
 
   const totalWorkoutTime = useMemo(() => {

@@ -62,11 +62,16 @@
 }
 /* */
 
-/* @media screen and (min-width: 1200px) { */
+/* @media screen and (min-width: 1200px) {
     .innerContainer {
         display: block;
     }
-/* } */
+} */
+
+/* TODO: remove below for media query above */
+.innerContainer {
+    display: block;
+}
 
 .timeline {
     position: relative;

@@ -1,23 +1,23 @@
 package com.jkosoy.gymrat
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.DisplayMetrics
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.tv.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.tv.material3.ExperimentalTvMaterial3Api
-import androidx.tv.material3.Surface
 import com.jkosoy.gymrat.ui.theme.GymRatTheme
-import android.webkit.WebSettings;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.window.OnBackInvokedDispatcher
+import kotlin.math.ceil
+
 
 class MainActivity : ComponentActivity() {
+    private var lastPause: Long = -1;
+    private val RESTART_TIME: Long = 2 * 60 * 60 * 1000; // 2 hours
+
+
     @SuppressLint("SetJavaScriptEnabled")
     fun loadPage() {
         val webView: WebView = findViewById(R.id.webview)
@@ -44,6 +44,7 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalTvMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        adjustPixelDensity()
         setContentView(R.layout.activity_main)
         loadPage()
     }
@@ -52,14 +53,24 @@ class MainActivity : ComponentActivity() {
 
     override fun onPause() {
         super.onPause()
+        lastPause = System.currentTimeMillis()
+
         //val webView: WebView = findViewById(R.id.webview)
         //webView.loadUrl("javascript:(function() { onPause(); })();");
     }
 
     override fun onResume() {
         super.onResume()
-        //val webView: WebView = findViewById(R.id.webview)
-        //webView.loadUrl("javascript:(function() { onResume(); })();");
+        val now:Long = System.currentTimeMillis()
+        val delta:Long = now - lastPause
+        val webView: WebView = findViewById(R.id.webview)
+
+        if (delta > RESTART_TIME) {
+            webView.reload()
+            return
+        }
+
+//        webView.loadUrl("javascript:(function() { onResume(); })();");
     }
 }
 
