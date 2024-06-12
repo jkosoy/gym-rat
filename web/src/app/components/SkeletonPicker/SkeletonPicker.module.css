@@ -1,6 +1,6 @@
 .container {
-    width: 200px;
-    height: 20px;
+    width: calc(200px * var(--scale));
+    height: calc(20px * var(--scale));
     opacity: 0.5;
 }
 
@@ -10,8 +10,8 @@
     height: 100%;
     position: relative;
     overflow: hidden;
-    background-color: #rgba(86,86,86,0.5);
-    border-radius: 6px;
+    background-color: rgba(86,86,86,0.5);
+    border-radius: calc(6px * var(--scale));
 }
 
 .skeleton::after {

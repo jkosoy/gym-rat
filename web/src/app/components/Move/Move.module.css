@@ -1,27 +1,27 @@
 .container {
     display:flex;
     place-items: center;
-    gap: 5px;
+    gap: calc(5px * var(--scale));
 }
 
 .container.focused {
-    font-size: calc(2.8rem * var(--font-scale));
-    gap: 12px;
+    font-size: calc(2.8rem * var(--scale));
+    gap: calc(12px * var(--scale));
 }
 
 .reps {
-    flex:0 0 26px;
-    font-size: calc(1.2rem * var(--font-scale));
-    padding-right: 4px;
+    flex:0 0 calc(26px * var(--scale));
+    font-size: calc(1.2rem * var(--scale));
+    padding-right: calc(4px * var(--scale));
     font-weight: var(--font-weight-light);
 }
 
 .equipment {
-    width: 20px;
-    height: 20px;
-    padding: 4px;
+    width: calc(20px * var(--scale));
+    height: calc(20px * var(--scale));
+    padding: calc(4px * var(--scale));
     background: rgba(0,0,0,0.125);
-    border-radius: 4px;
+    border-radius: calc(4px * var(--scale));
     display: flex;
     place-items: center;
     place-content: center;
@@ -29,27 +29,26 @@
 
 .label {
     flex:1 0 0;
-    max-width: 240px;
+    max-width: calc(240px * var(--scale));
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
 
 .focused .label {
-    min-width: 400px;
+    min-width: calc(400px * var(--scale));
     text-align: center;
     max-width: unset;
     overflow: visible;
     text-overflow: unset;
 }
 
-
 .focused .reps {
-    font-size: calc(2rem * var(--font-scale));
+    font-size: calc(2rem * var(--scale));
     padding-right: 0;
 }
 
 .focused .equipment {
-    width: 30px;
-    height: 30px;
+    width: calc(30px * var(--scale));
+    height: calc(30px * var(--scale));
 }

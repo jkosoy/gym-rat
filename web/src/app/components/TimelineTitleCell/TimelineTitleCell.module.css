@@ -25,7 +25,7 @@
     display: grid;
     grid-template-columns: 8fr 1fr;
     gap: 5px;
-    font-size: calc(2.5rem * var(--font-scale));
+    font-size: calc(2.5rem * var(--scale));
     font-weight: var(--font-weight-bold);
 }
 

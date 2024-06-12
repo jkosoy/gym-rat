@@ -1,5 +1,5 @@
 .container {
-    padding: 8px 0 10px 4px;
+    padding: calc(8px * var(--scale)) 0 calc(10px * var(--scale)) calc(4px * var(--scale));
     z-index: var(--layer-bottom);
     background: var(--color-background);
     transition: background 500ms linear;
@@ -9,12 +9,12 @@
 
 .container::after {
     width: 100%;
-    height: 2px;
+    height: calc(2px * var(--scale));
     content: '';
     display: block;
     position: absolute;
     bottom: 0;
-    border-radius: var(--border-radius);
+    border-radius: calc(var(--border-radius) * var(--scale));
     background: rgba(0,0,0,0.125);
     z-index: var(--layer-top);
 }
@@ -22,12 +22,12 @@
 .grid {
     display: grid;
     grid-template-columns: 8fr 1fr;
-    gap: 5px;
-    font-size: calc(1.9rem * var(--font-scale));
+    gap: calc(5px * var(--scale));
+    font-size: calc(1.9rem * var(--scale));
     align-items: center;
     background: rgba(0,0,0,0.05);
-    border-radius: 8px;
-    padding: 15px 10px;
+    border-radius: calc(8px * var(--scale));
+    padding: calc(15px * var(--scale)) calc(10px * var(--scale));
 }
 
 .moveList {

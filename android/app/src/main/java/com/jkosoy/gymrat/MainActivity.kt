@@ -30,14 +30,7 @@ class MainActivity : ComponentActivity() {
         webView.settings.domStorageEnabled = true
         webView.webViewClient = WebViewClient()
         webView.clearCache(true)
-//        webView.setInitialScale(1)
-        // https://stackoverflow.com/questions/76426418/why-is-android-tv-app-having-a-web-view-with-low-resolution
-//        webView.webViewClient = object : WebViewClient() {
-//            override fun onPageFinished(view: WebView?, url: String?) {
-//                view?.loadUrl("javascript:document.body.style.zoom = 1/window.devicePixelRatio;")
-//                super.onPageFinished(view, url)
-//            }
-//        }
+        webView.setInitialScale(1)
         webView.loadUrl("https://gym-rat-tv.vercel.app/tv")
     }
 
