@@ -4,6 +4,29 @@
     gap: 5px;
     margin: 25px 10px;
     height: calc(75% - 50px);
+    animation: in 800ms cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
+}
+
+@keyframes in {
+    from {
+        opacity: 0;
+        transform: scale(1.08);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes out {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(1.08);
+    }
 }
 
 
@@ -30,7 +53,7 @@
 
 .controlsInnerContainer {
     display: inline-flex;
-    gap: 30px;
+    gap: 20px;
     background: rgba(0,0,0,0.125);
     border-radius: 8px;
     height: 100%;

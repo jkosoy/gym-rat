@@ -7,24 +7,48 @@ import { ButtonWithIcon } from '../ButtonWithIcon';
 import classNames from 'classnames/bind';
 
 export function ActiveMovePane() {
-    const { workout, getCurrentCircuit, getCurrentSet, status, isPaused } = useWorkout();
+    const { 
+        workout, 
+        getCurrentCircuit, 
+        getCurrentSet, 
+        status, 
+        isPaused, 
+        elapsedTime, 
+        togglePlayPause,
+        nextSet,
+        prevSet
+    } = useWorkout();
 
+    let totalTime = 0;
 
     const setEl = (() => {
-        if(["warmup", "cooldown", "default"].includes(status) && false) {
+        if(["warmup", "cooldown", "complete"].includes(status)) {
             const circuit:Circuit = getCurrentCircuit()
+            totalTime = circuit.sets[0].recoverySeconds;
 
             return (
                 <h2>{circuit.name}</h2>
             )
         }
 
-        const set:ExcerciseSet = workout.circuits[1].sets[1] // getCurrentSet()
+        if(status === "circuit-recovery") {
+            totalTime = workout.recoverySeconds
+
+            return (
+                <h2>Water Break</h2>
+            )
+        }
+
+        const set:ExcerciseSet = getCurrentSet()
         if(status === "recovery") {
+            totalTime = set.recoverySeconds;
+
             return (
                 <h2>Recovery</h2>
             )            
         }
+
+        totalTime = set.activeSeconds;
 
         const moves = set.moves.flatMap((move, i) => {
             const { reps, name, equipment } = move;
@@ -45,6 +69,18 @@ export function ActiveMovePane() {
         centered: true
     })
 
+    const handleOnClick = () => {
+        togglePlayPause();
+    }
+
+    const handlePrevClick = () => {
+        prevSet();
+    }
+
+    const handleNextClick = () => {
+        nextSet();
+    }
+
     return (
         <div className={styles.container}>
             <div className={styles.controlsContainer}>
@@ -53,21 +89,21 @@ export function ActiveMovePane() {
                 </div>
             </div>
             <div className={styles.mainTimerContainer}>
-                <Timer style="remaining" currentTime={28} totalTime={30} />
+                <Timer style="remaining" currentTime={elapsedTime} totalTime={totalTime} />
             </div>
             <div className={styles.infoContainer}>
                 <div className={styles.moveContainer}>
                     {setEl}
                 </div>
                 <div className={styles.progressBar}>
-                    <Timer style="bar" currentTime={28} totalTime={30} />
+                    <Timer style="bar" currentTime={elapsedTime} totalTime={totalTime} />
                 </div>
             </div>
             <div className={controlsClassName}>
                 <div className={styles.controlsInnerContainer}>
-                    <ButtonWithIcon icon="prev" />
-                    <ButtonWithIcon icon={isPaused ? "play" : "pause"} />
-                    <ButtonWithIcon icon="next" />
+                    <ButtonWithIcon icon="prev" onClick={handlePrevClick} />
+                    <ButtonWithIcon icon={isPaused ? "play" : "pause"} onClick={handleOnClick} />
+                    <ButtonWithIcon icon="next" onClick={handleNextClick} />
                 </div>
             </div>
         </div>

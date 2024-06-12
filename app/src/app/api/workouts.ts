@@ -57,8 +57,6 @@ async function getDatabaseInPage(pageId: string): Promise<QueryDatabaseResponse|
 export async function getWorkout(routine: Routine): Promise<Workout> {
   const rawCircuitsDB = await getDatabaseInPage(routine.id);
 
-  // TODO: each circuitPage hs a "set"s property representing how many sets to create. 
-  // TODO: need to copy the sets 👆 that many times to create the circuit name
   const circuits:Circuit[] = await Promise.all(rawCircuitsDB!.results.map(async rawCircuit => {
     let moves:Move[] = [];
     const rawMovesDB = await getDatabaseInPage(rawCircuit.id);

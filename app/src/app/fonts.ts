@@ -8,7 +8,3 @@ export const dm_sans = DM_Sans({
   style: ['normal'],
   display: 'swap',
 })
- 
-// export const holtwood = Holtwood_One_SC({
-
-// })

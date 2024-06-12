@@ -10,7 +10,7 @@ export interface TimerProps {
 }
 
 export function Timer({style, currentTime, totalTime}:PropsWithoutRef<TimerProps>) {
-    const percentCompleted = (currentTime/totalTime) || 1;
+    const percentCompleted = (currentTime/totalTime) || 0;
 
     const displayTime = useMemo(() => {
         if(style === "bar") {

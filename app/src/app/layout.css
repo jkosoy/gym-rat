@@ -3,6 +3,10 @@
   --color-background-active: #E50850;
   --color-background-circuit-recovery: #CDBD14;
   --color-background-default: #9672FC;
+  --color-background-warmup: var(--color-background-default);
+  --color-background-cooldown: var(--color-background-default);
+  --color-background-complete: var(--color-background-default);
+
   --color-background: var(--color-background-default);
 
   --font-family: var(--font-dm-sans);

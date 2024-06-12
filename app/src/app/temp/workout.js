@@ -59,6 +59,14 @@ export const tempWorkout = {
       ]
     },
     {
+      name: 'Circuit 2',
+      sets: [ { activeSeconds: 20, recoverySeconds: 10, moves: [{name: 'Circuit 2 has 10 seconds'}] } ]
+    },
+    {
+      name: 'Circuit 3',
+      sets: [ { activeSeconds: 20, recoverySeconds: 0, moves: [{name: 'No recovery'}] } ]
+    },
+    {
       name: 'Cooldown',
       sets: [ { activeSeconds: 0, recoverySeconds: 300, moves: [] } ]
     }

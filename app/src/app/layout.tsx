@@ -14,7 +14,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" style={{"--font-family": dm_sans.style.fontFamily} as CSSProperties}>
+    <html lang="en" style={{
+      "--font-family": dm_sans.style.fontFamily} as CSSProperties
+    }>
       <body>{children}</body>
     </html>
   );
