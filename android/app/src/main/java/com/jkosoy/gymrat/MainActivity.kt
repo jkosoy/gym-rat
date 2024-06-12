@@ -21,9 +21,12 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("SetJavaScriptEnabled")
     fun loadPage() {
         val webView: WebView = findViewById(R.id.webview)
-        val webSettings: WebSettings = webView.settings
-        webSettings.javaScriptEnabled = true
+        webView.settings.javaScriptEnabled = true
+        webView.settings.useWideViewPort = true
+        webView.settings.loadWithOverviewMode = true
+        webView.settings.layoutAlgorithm = WebSettings.LayoutAlgorithm.NORMAL
         webView.webViewClient = WebViewClient()
+        webView.setInitialScale(1)
         webView.loadUrl("https://gym-rat-tv.vercel.app/")
     }
 

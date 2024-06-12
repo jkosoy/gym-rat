@@ -30,7 +30,7 @@
 }
 
 
-@media screen and (min-width: 480px) {
+@media (min-width: 480px) {
     .container {
         height: unset;
     }
@@ -70,7 +70,7 @@
     font-weight: var(--font-weight-bold);
 }
 
-@media screen and (min-width: 480px) {
+@media (min-width: 480px) {
     .container .mainTimerContainer {
         font-size: 240px;
     }
@@ -102,7 +102,7 @@
     padding: 0 24px;
 }
 
-@media screen and (min-width: 480px) {
+@media (min-width: 480px) {
     .progressBar {
         top: 48px;
         padding: 0 48px;
@@ -135,7 +135,7 @@
 
 }
 
-@media screen and (min-width: 480px) {
+@media (min-width: 480px) {
     .moveContainer h2 {
         font-size: 32px;
     }
