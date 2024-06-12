@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import "./layout.css";
 import { dm_sans } from "./fonts";
-import { CSSProperties } from "react";
+import { CSSProperties, useEffect } from "react";
 
 export const metadata: Metadata = {
   title: "Gym Rat",
@@ -20,6 +20,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  
   return (
     <html lang="en" style={{
       "--font-family": dm_sans.style.fontFamily} as CSSProperties
