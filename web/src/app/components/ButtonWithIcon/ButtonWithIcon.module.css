@@ -1,0 +1,18 @@
+.container {
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    opacity: 0.6;
+    height: 100%;
+    color: #fff;
+}
+
+.container:hover,
+.container.isActive {
+    opacity: 0.75;
+}
+
+.container svg {
+    width: 40px;
+    height: auto;
+}
