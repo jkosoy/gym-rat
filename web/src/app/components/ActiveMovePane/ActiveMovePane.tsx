@@ -5,6 +5,7 @@ import { Move } from '../Move';
 import { Circuit, ExcerciseSet } from '@/app/types/Workout';
 import { ButtonWithIcon } from '../ButtonWithIcon';
 import classNames from 'classnames/bind';
+import { useDevice } from '@/app/hooks/useDevice';
 
 export function ActiveMovePane() {
     const { 
@@ -18,6 +19,8 @@ export function ActiveMovePane() {
         nextSet,
         prevSet
     } = useWorkout();
+
+    const { isTV } = useDevice()
 
     let totalTime = 0;
 
@@ -81,10 +84,15 @@ export function ActiveMovePane() {
         nextSet();
     }
 
+    const closeClassName = classNames.bind(styles)({
+        controlsInnerContainer: true,
+        hidden: isTV
+    })
+
     return (
         <div className={styles.container}>
             <div className={styles.controlsContainer}>
-                <div className={styles.controlsInnerContainer}>
+                <div className={closeClassName}>
                     <ButtonWithIcon icon="close" />
                 </div>
             </div>

@@ -66,6 +66,10 @@
     color: white;
 }
 
+.controlsInnerContainer.hidden {
+    display: none;
+}
+
 .container .mainTimerContainer {
     flex-grow: 5;
     display: flex;
