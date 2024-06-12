@@ -65,7 +65,7 @@ export function TimelinePane() {
         }
 
         return totalElapsedTime;
-    }, [circuitIndex, setIndex, elapsedTime, status, workout])
+    }, [circuitIndex, setIndex, elapsedTime, status, workout, totalWorkoutTime])
 
     const timelineElements = useMemo(() => {
         return workout.circuits.flatMap((circuit, i) => {
@@ -162,7 +162,7 @@ export function TimelinePane() {
             top,
             behavior: 'smooth'
         })
-    }, [scrollEl, timelineEl, status, circuitIndex, setIndex])
+    }, [scrollEl, timelineEl, status, circuitIndex, setIndex, workout])
 
     return (
         <div className={styles.container}>

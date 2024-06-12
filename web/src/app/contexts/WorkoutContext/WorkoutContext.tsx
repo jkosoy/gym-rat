@@ -1,6 +1,6 @@
 "use client";
 
-import { Context, createContext, PropsWithChildren, useContext, useEffect, useMemo, useState } from "react";
+import { Context, createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Circuit, ExcerciseSet, Workout } from "@/app/types/Workout";
 
 type Status = 'active' | 'recovery' | 'warmup' | 'cooldown' | 'circuit-recovery' | 'complete';
@@ -36,32 +36,40 @@ export function WorkoutProvider({workout, children}: PropsWithChildren<WorkoutPr
   const [isPaused, setIsPaused] = useState(false)
 
   // convenience methods
-  const pause = () => { 
+  const pause = useCallback(() => { 
     if(isPaused) {
       return
     }
 
     setIsPaused(true);
-  }
+  },[isPaused])
   
-  const play = () => {
+  const play = useCallback(() => {
     if(!isPaused) {
       return
     }
 
     setIsPaused(false);
-  }
+  },[isPaused])
 
-  const togglePlayPause = () => {
+  const togglePlayPause = useCallback(() => {
     if(isPaused) {
       play();
       return;
     }
 
     pause();
-  }
+  },[isPaused, pause, play])
 
-  const nextSet = () => {
+  const getCurrentCircuit = useCallback(():Circuit => {
+    return workout.circuits[circuitIndex]
+  },[workout, circuitIndex])
+
+  const getCurrentSet = useCallback(():ExcerciseSet => {
+    return getCurrentCircuit().sets[setIndex]
+  }, [getCurrentCircuit, setIndex])
+
+  const nextSet = useCallback(() => {
     setElapsedTime(0);
     // account for total time
 
@@ -107,9 +115,9 @@ export function WorkoutProvider({workout, children}: PropsWithChildren<WorkoutPr
 
     setSetIndex(nextSetIndex);
     setStatus('active');
-  }
+  },[workout,circuitIndex,getCurrentCircuit,getCurrentSet,setIndex,status])
 
-  const prevSet = () => {
+  const prevSet = useCallback(() => {
     setElapsedTime(0);
     // account for total time
 
@@ -157,15 +165,8 @@ export function WorkoutProvider({workout, children}: PropsWithChildren<WorkoutPr
     }
 
     setStatus(getCurrentSet().recoverySeconds > 0 ? "recovery" : "active");
-  }
+  },[workout,circuitIndex,getCurrentCircuit,getCurrentSet,setIndex,status])
 
-  const getCurrentCircuit = ():Circuit => {
-    return workout.circuits[circuitIndex]
-  }
-
-  const getCurrentSet = ():ExcerciseSet => {
-    return getCurrentCircuit().sets[setIndex]
-  }
 
   const totalWorkoutTime = useMemo(() => {
     let time = 0;

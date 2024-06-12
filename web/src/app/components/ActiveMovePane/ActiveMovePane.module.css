@@ -93,8 +93,20 @@
 }
 
 .progressBar {
-    width: 80%;
-    margin: 0 auto;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 12px;
+    display: flex;
+    place-content: center;
+    padding: 0 24px;
+}
+
+@media screen and (min-width: 480px) {
+    .progressBar {
+        top: 48px;
+        padding: 0 48px;
+    }
 }
 
 .infoContainer::before,
@@ -128,7 +140,6 @@
         font-size: 32px;
     }
 }
-
 
 .moveContainer .moves {
     flex: 1 0 0;
