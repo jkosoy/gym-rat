@@ -23,7 +23,7 @@
     display: grid;
     grid-template-columns: 8fr 1fr;
     gap: 5px;
-    font-size: 1.9rem;
+    font-size: calc(1.9rem * var(--font-scale));
     align-items: center;
     background: rgba(0,0,0,0.05);
     border-radius: 8px;
