@@ -10,21 +10,6 @@ export function WorkoutScreen() {
     const el = useRef(null);
     const { status } = useWorkout()
 
-    // google tv hack
-    useEffect(() => {
-        alert(navigator.userAgent)
-
-        if(navigator.userAgent && typeof screen != 'undefined' && screen.width) {
-        const isAndroid = navigator.userAgent.includes('Android') || navigator.userAgent.includes('Google TV') || navigator.userAgent.includes('GoogleTV')
-        if(isAndroid) {
-            const content = `user-scalable=no, initial-scale:1, maximum-scale: 1, width=${screen.width}`
-            const viewport = document.querySelector('meta[name=viewport]')
-            viewport!.setAttribute('content', content)
-        }
-        }
-    }, [])
-
-
     useEffect(() => {
         const rootEl = document.documentElement;
 

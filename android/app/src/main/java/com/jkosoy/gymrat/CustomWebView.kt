@@ -22,7 +22,6 @@ class CustomWebView(context: Context, attrs: AttributeSet?, defStyleAttr: Int) :
         return false
     }
 
-
     override fun onScrollChanged(l: Int, t: Int, oldl: Int, oldt: Int) {
         // do nothing
     }
