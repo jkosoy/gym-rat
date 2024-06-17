@@ -9,7 +9,7 @@
     transition: background 500ms linear;
 }
 
-.container::after {
+/* .container::after {
     width: 100%;
     height: calc(2px * var(--scale));
     content: '';
@@ -19,7 +19,7 @@
     border-radius: var(--border-radius);
     background: rgba(0,0,0,0.125);
     z-index: var(--layer-top);
-}
+} */
 
 .grid {
     display: grid;

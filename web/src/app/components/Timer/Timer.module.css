@@ -8,7 +8,7 @@
 
 .progressBar {
     width: 100%;
-    height: calc(8px * var(--scale));
+    height: calc(4px * var(--scale));
     background: rgba(0,0,0,0.25);
     border-radius: calc(4px * var(--scale));
     position: relative;

@@ -170,12 +170,12 @@ export function WorkoutProvider({workout, children}: PropsWithChildren<WorkoutPr
 
   const totalWorkoutTime = useMemo(() => {
     let time = 0;
-    workout.circuits.forEach(circuit => {
+    workout.circuits.forEach((circuit, idx) => {
       circuit.sets.forEach(set => {
         time += set.activeSeconds + set.recoverySeconds;
       })
       
-      if(circuit.name !== 'Cooldown' && circuit.name !== 'Warmup') {
+      if(idx === 0 || idx === workout.circuits.length -1) {
         time += workout.recoverySeconds;
       }
     })

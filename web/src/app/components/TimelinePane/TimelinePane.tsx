@@ -10,9 +10,15 @@ import { Move } from "@/app/components/Move";
 import { Timer } from "../Timer/Timer";
 
 export function TimelinePane() {
-    const { workout, totalWorkoutTime, elapsedTime, status, circuitIndex, setIndex } = useWorkout()
-    const scrollEl = useRef<HTMLDivElement>(null);
-    const timelineEl = useRef<HTMLDivElement>(null);
+    const { 
+        workout,
+        totalWorkoutTime, 
+        elapsedTime, 
+        status, 
+        circuitIndex, 
+        setIndex
+    } = useWorkout()
+    const timelineEls = useRef<HTMLDivElement[]>([])
 
     const totalElapsedTime = useMemo(() => {
         if(status === "warmup") {
@@ -39,7 +45,7 @@ export function TimelinePane() {
                     return time;
                 }
 
-                // incomplete circuits
+                // current circuit
                 let time = 0;
                 for(let j=0;j<=setIndex;j++) {
                     const { activeSeconds, recoverySeconds } = workout.circuits[i].sets[j];
@@ -69,14 +75,16 @@ export function TimelinePane() {
 
     const timelineElements = useMemo(() => {
         return workout.circuits.flatMap((circuit, i) => {
-            if(["Warmup", "Cooldown"].includes(circuit.name)) {        
+            if(i === 0 || i === workout.circuits.length-1) {        
                 const className = classNames.bind(styles)({
                     sticky: true,
                     noSets: true
                 })
 
-                return (
-                    <TimelineTitleCell key={`c${i}`} title={circuit.name} duration={circuit.sets[0].recoverySeconds} isWarmupOrCooldown />
+                return (    
+                    <div key={`c${i}`} className={styles.scrollCell} ref={el => {timelineEls.current[timelineEls.current.length] = el!}}>
+                        <TimelineTitleCell title={circuit.name} duration={circuit.sets[0].recoverySeconds} isWarmupOrCooldown />
+                    </div>                        
                 )
             }
 
@@ -91,13 +99,18 @@ export function TimelinePane() {
 
                 
                 const recoveryCell = (set.recoverySeconds > 0) ? (
-                    <TimelineInfoCell duration={set.recoverySeconds}>
-                        <Move label={"Recovery"} />
-                    </TimelineInfoCell>) : null;
+                    <div className={styles.scrollCell} ref={el => {timelineEls.current[timelineEls.current.length] = el!}}>
+                        <TimelineInfoCell duration={set.recoverySeconds}>
+                            <Move label={"Recovery"} />
+                        </TimelineInfoCell>
+                    </div>
+                ) : null;
 
                 return (
                     <Fragment key={`c${i}s${j}`}>
-                        <TimelineInfoCell duration={set.activeSeconds}>{moves}</TimelineInfoCell>
+                        <div className={styles.scrollCell} ref={el => {timelineEls.current[timelineEls.current.length] = el!}}>
+                            <TimelineInfoCell duration={set.activeSeconds}>{moves}</TimelineInfoCell>
+                        </div>
                         {recoveryCell}
                     </Fragment>
                 )
@@ -107,66 +120,124 @@ export function TimelinePane() {
                 <Fragment key={`c${i}`}>
                     <TimelineTitleCell title={circuit.name} />
                     {setElements}
-                    <TimelineInfoCell duration={workout.recoverySeconds}>                    
-                        <Move label={"Water Break"} />
-                    </TimelineInfoCell>
+                    <div className={styles.scrollCell} ref={el => {timelineEls.current[timelineEls.current.length] = el!}}>
+                        <TimelineInfoCell duration={workout.recoverySeconds}>                    
+                            <Move label={"Water Break"} />
+                        </TimelineInfoCell>
+                    </div>
                 </Fragment>
             )
         }).flat()
 
     }, [workout])
 
-    
+
+    const totalItems = useMemo(() => {
+        let counter = 0;
+        workout.circuits.forEach((circuit, idx) => {
+            if(idx === 0 || idx === workout.circuits.length-1) {
+                counter++;
+                return;
+            }
+
+            circuit.sets.forEach(set => {
+                counter++;
+                if(set.recoverySeconds > 0) {
+                    counter++;
+                }
+            });
+
+            if(workout.recoverySeconds > 0) {
+                counter++
+            }
+        });
+
+        return counter;
+    }, [workout])
+
+    const currentItem = useMemo(() => {
+        if(status === 'warmup') {
+            return 0;
+        }
+
+        if(status === 'cooldown' || status === 'complete') {
+            return totalItems-1;
+        }
+
+        let counter = -1;
+        workout.circuits.slice(0, circuitIndex+1).forEach((circuit, idx) => {
+            // warmup
+            if(idx === 0) {
+                counter++;
+                return;
+            }
+
+            // completed circuits
+            if(idx < circuitIndex) {
+                circuit.sets.forEach(set => {
+                    counter++;
+
+                    if(set.recoverySeconds > 0) {
+                        counter++;
+                    }
+                })
+
+                if(workout.recoverySeconds > 0) {
+                    counter++;
+                }
+
+                return;
+            }
+
+            // current circuit, completed sets
+            circuit.sets.slice(0, setIndex).forEach(set => {
+                counter++;
+
+                if(set.recoverySeconds > 0) {
+                    counter++;
+                }
+            })
+
+            // current circuit, current set
+            counter++;
+
+            if(status === 'recovery') {
+                counter++;
+            }
+
+            if(status === 'circuit-recovery') {
+                if(workout.circuits[circuitIndex].sets[setIndex].recoverySeconds > 0) {
+                    counter++;
+                }
+
+                counter++; 
+            }
+        })
+
+        return counter;
+    }, [status, workout, circuitIndex, setIndex]);
+
+
     useEffect(() => {
-        if(!scrollEl || !scrollEl.current || !timelineEl || !timelineEl.current) {
+        if(!timelineEls || !timelineEls.current) {
             return;
         }
 
-        const top = (() => {
-            if(status === 'warmup') {
-                return 0;
-            }
+        const els = timelineEls.current as HTMLDivElement[]
+        if(els.length === 0) { 
+            return
+        }
 
-            const elements = Array.from(timelineEl.current!.querySelectorAll("div"));
-            if(status === "cooldown" || status === "complete") {
-                return elements[elements.length - 1].getBoundingClientRect().top;
-            }
-
-            let index = 0;
-            for(let i=0;i<=circuitIndex;i++) {
-                // completed circuits
-                if(i < circuitIndex) {
-                    index += workout.circuits[i].sets.length + 2; // 1 is for the circuit recovery cell
-                }
-
-                // incomplete circuits
-                // for(let j=0;j<setIndex;j++) {
-                //     if(status === "active") {
-                //         index++;
-                //     }
-
-                //     if(status === "recovery") {
-                //         index++;
-                //     }
-
-                //     if(status === "circuit-recovery") {
-                //         index++;
-                //     }
-                // }
-            }
-
-            return elements[index].getBoundingClientRect().top;
-        })();
-
-        scrollEl.current.scroll({
-            top,
-            behavior: 'smooth'
+        const el = els[currentItem === totalItems-1 ? totalItems : currentItem];
+        el.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start',
         })
-    }, [scrollEl, timelineEl, status, circuitIndex, setIndex, workout])
+    }, [timelineEls, currentItem, totalItems])
 
     return (
         <div className={styles.container}>
-            <div ref={scrollEl} className={styles.innerContainer}>
+            <div className={styles.innerContainer}>
                 <div className={styles.timer}>
                     <div className={styles.timerInner}>
                         <div className={styles.timerText}><Timer style="current" currentTime={totalElapsedTime} totalTime={totalWorkoutTime} /></div>
@@ -174,8 +245,10 @@ export function TimelinePane() {
                         <div className={styles.timerText}><Timer style="remaining" currentTime={totalElapsedTime} totalTime={totalWorkoutTime} /></div>
                     </div>
                 </div>
-                <div ref={timelineEl} className={styles.timeline}>
+                <div className={styles.timeline}>
                     {timelineElements}
+                    {/* extra scroll cell to force the cooldown to stand alone */}
+                    <div className={styles.scrollCell} ref={el => {timelineEls.current[timelineEls.current.length] = el!}}></div>
                 </div>
             </div>
         </div>
