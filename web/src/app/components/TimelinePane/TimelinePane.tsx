@@ -215,7 +215,7 @@ export function TimelinePane() {
         })
 
         return counter;
-    }, [status, workout, circuitIndex, setIndex]);
+    }, [status, workout, circuitIndex, setIndex, totalItems]);
 
 
     useEffect(() => {

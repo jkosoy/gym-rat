@@ -14,6 +14,13 @@ export const tempWorkout:Workout = {
           activeSeconds: 50,
           recoverySeconds: 10,
           moves: [
+            { name: 'Plank jacks with differnet words', equipment: '', reps: 10 },
+            { name: 'Plank jacks', equipment: '', reps: 10 },
+            { name: 'Plank jacks', equipment: '', reps: 10 },
+            { name: 'Plank jacks', equipment: '', reps: 10 },
+            { name: 'Plank jacks', equipment: '', reps: 10 },
+            { name: 'Plank jacks', equipment: '', reps: 10 },
+            { name: 'Plank jacks', equipment: '', reps: 10 },
             { name: 'Plank jacks', equipment: '', reps: 10 },
             { name: 'Plank w shoulder taps', equipment: '', reps: 20 }
           ]

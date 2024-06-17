@@ -5,6 +5,7 @@
     transition: background 500ms linear;
     display: block;
     position: relative;
+    font-size: calc(1.6rem * var(--scale));
 }
 
 .container::after {
@@ -23,11 +24,10 @@
     display: grid;
     grid-template-columns: 8fr 1fr;
     gap: calc(5px * var(--scale));
-    font-size: calc(1.9rem * var(--scale));
     align-items: center;
     background: rgba(0,0,0,0.05);
     border-radius: calc(8px * var(--scale));
-    padding: calc(15px * var(--scale)) calc(10px * var(--scale));
+    padding: calc(10px * var(--scale));
 }
 
 .moveList {

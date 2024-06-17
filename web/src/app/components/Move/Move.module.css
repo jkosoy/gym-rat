@@ -1,54 +1,64 @@
 .container {
+    --move-icon-size-lg: 40px;
+    --move-icon-size-sm: 25px;
     display:flex;
-    place-items: center;
-    gap: calc(5px * var(--scale));
+    place-items: start;
+    gap: calc(10px * var(--scale));
+    margin: calc(2px * var(--scale)) 0;
 }
 
 .container.focused {
-    font-size: calc(2.8rem * var(--scale));
-    gap: calc(12px * var(--scale));
+    margin: calc(5px * var(--scale)) 0;
 }
 
-.reps {
-    flex:0 0 calc(26px * var(--scale));
-    font-size: calc(1.2rem * var(--scale));
-    padding-right: calc(4px * var(--scale));
-    font-weight: var(--font-weight-light);
-}
 
 .equipment {
-    width: calc(20px * var(--scale));
-    height: calc(20px * var(--scale));
+    width: calc(var(--move-icon-size-sm) * var(--scale));
+    height: calc(var(--move-icon-size-sm) * var(--scale));
     padding: calc(4px * var(--scale));
     background: rgba(0,0,0,0.125);
     border-radius: calc(4px * var(--scale));
     display: flex;
-    place-items: center;
-    place-content: center;
+}
+
+.moveInfoEl {
+    flex:1 0 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .label {
-    flex:1 0 0;
-    max-width: calc(240px * var(--scale));
+    font-size: calc(1.6rem * var(--scale));
+    width: calc(240px * var(--scale));
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
 }
 
+/* move the title text to be centered with the equipment icon if it exists */
+.hasEquipment .label {
+    margin-top: calc(2px * var(--scale)); 
+}
+
+.reps {
+    font-size: calc(1.05rem * var(--scale));
+    font-weight: var(--font-weight-light);
+    padding-bottom: calc(10px * var(--scale));
+}
+
+.focused .moveInfoEl {
+    padding: calc(5px * var(--scale)) 0;
+}
+
 .focused .label {
-    min-width: calc(400px * var(--scale));
-    text-align: center;
-    max-width: unset;
-    overflow: visible;
-    text-overflow: unset;
+    font-size: calc(2.1rem * var(--scale));
 }
 
 .focused .reps {
-    font-size: calc(2rem * var(--scale));
-    padding-right: 0;
+    font-size: calc(1.6rem * var(--scale));
 }
 
 .focused .equipment {
-    width: calc(30px * var(--scale));
-    height: calc(30px * var(--scale));
+    width: calc(var(--move-icon-size-lg) * var(--scale));
+    height: calc(var(--move-icon-size-lg) * var(--scale));
 }
