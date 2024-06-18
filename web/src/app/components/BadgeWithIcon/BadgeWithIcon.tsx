@@ -12,9 +12,12 @@ import { TRXIcon } from '../TRXIcon'
 import { SandbagIcon } from '../SandbagIcon'
 import { ResistanceTubesIcon } from '../ResistanceTubesIcon'
 import { SlamballIcon } from '../SlamballIcon'
+import { BodyWeightIcon } from '../BodyWeightIcon'
+
+export type IconName = "ladder" | "bosu" | "kettlebell" | "free-weight" | "jump-rope" | "box" | "battle-rope" | "resistance-band" | "resistance-tubes" | "trx" | "sandbag" | "slamball" | "bodyweight";
 
 type BadgeWithIconProps = {
-    icon: "ladder" | "bosu" | "kettlebell" | "free-weight" | "jump-rope" | "box" | "battle-rope" | "resistance-band" | "resistance-tubes" | "trx" | "sandbag" | "slamball"
+    icon: IconName
 }
 
 export function BadgeWithIcon({icon}:PropsWithoutRef<BadgeWithIconProps>) {
@@ -66,6 +69,10 @@ export function BadgeWithIcon({icon}:PropsWithoutRef<BadgeWithIconProps>) {
         if(icon == "slamball") {
             return <SlamballIcon />
         }        
+
+        if(icon === "bodyweight") {
+            return <BodyWeightIcon />
+        }
     }, [icon])
 
     return (

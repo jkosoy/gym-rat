@@ -14,10 +14,10 @@ export const tempWorkout:Workout = {
           activeSeconds: 50,
           recoverySeconds: 10,
           moves: [
-            { name: 'Plank jacks with differnet words', equipment: '', reps: 10 },
+            { name: 'Plank jacks with differnet words', equipment: 'Tubes', reps: 10 },
+            { name: 'Plank jacks', equipment: 'TRX', reps: 10 },
             { name: 'Plank jacks', equipment: '', reps: 10 },
-            { name: 'Plank jacks', equipment: '', reps: 10 },
-            { name: 'Plank jacks', equipment: '', reps: 10 },
+            { name: 'Plank jacks', equipment: 'Slam Ball', reps: 10 },
             { name: 'Plank jacks', equipment: '', reps: 10 },
             { name: 'Plank jacks', equipment: '', reps: 10 },
             { name: 'Plank jacks', equipment: '', reps: 10 },
