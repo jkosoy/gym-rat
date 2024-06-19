@@ -2,7 +2,7 @@
   --color-background-recovery: #2BD0FC;
   --color-background-active: #E50850;
   --color-background-circuit-recovery: #CDBD14;
-  --color-background-default: #9672FC;
+  --color-background-default: #8153FE;
   --color-background-warmup: var(--color-background-default);
   --color-background-cooldown: var(--color-background-default);
   --color-background-complete: var(--color-background-default);

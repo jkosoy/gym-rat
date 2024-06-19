@@ -2,7 +2,7 @@
     --move-icon-size-lg: 40px;
     --move-icon-size-sm: 25px;
     display:flex;
-    place-items: start;
+    place-items: flex-start;
     gap: calc(10px * var(--scale));
     margin: calc(2px * var(--scale)) 0;
 }

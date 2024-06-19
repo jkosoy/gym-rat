@@ -1,23 +1,24 @@
 .container {
     width:100%;
-    height: calc(100% - 200px);
-    display:grid;
-    justify-items: center;
-    align-items: center;
+    height: 100%;
+    display: grid;
+    place-items: center;
   }
   
   .containerContent {
     display:flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-direction: column;
+    place-items: center;
+    height: calc(100% - 200px);
   }
   
   .logo {
-    flex-basis: 100%;
+    flex:0;
     display:flex;
     justify-content: center;
   }
   
+  /* only needed because the logo was AI generated and has a purple background */
   .picker {
     transform: translateY(-20px);
   }

@@ -1,4 +1,3 @@
 <resources>
-
     <style name="Theme.GymRat" parent="Theme.AppCompat.DayNight.NoActionBar" />
 </resources>

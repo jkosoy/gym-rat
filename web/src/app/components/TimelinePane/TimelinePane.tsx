@@ -1,4 +1,4 @@
-import { Fragment, useMemo } from "react";
+import { Fragment, useMemo, useState } from "react";
 
 import { useWorkout } from "@/app/hooks/useWorkout";
 import styles from './TimelinePane.module.css';
@@ -19,6 +19,7 @@ export function TimelinePane() {
         setIndex
     } = useWorkout()
     const timelineEls = useRef<HTMLDivElement[]>([])
+    const [isTimelineIn, setIsTimelineIn] = useState(false);
 
     const totalElapsedTime = useMemo(() => {
         if(status === "warmup") {
@@ -218,6 +219,10 @@ export function TimelinePane() {
     }, [status, workout, circuitIndex, setIndex, totalItems]);
 
 
+    const handleTimelineInAnimation = () => {
+        setIsTimelineIn(true)
+    }
+
     useEffect(() => {
         if(!timelineEls || !timelineEls.current) {
             return;
@@ -228,15 +233,19 @@ export function TimelinePane() {
             return
         }
 
+        if(isTimelineIn !== true) {
+            return;
+        }
+
         const el = els[currentItem === totalItems-1 ? totalItems : currentItem];
         el.scrollIntoView({
             behavior: 'smooth',
             block: 'start',
         })
-    }, [timelineEls, currentItem, totalItems])
+    }, [timelineEls, currentItem, totalItems, isTimelineIn])
 
     return (
-        <div className={styles.container}>
+        <div className={styles.container} onAnimationEnd={handleTimelineInAnimation}>
             <div className={styles.innerContainer}>
                 <div className={styles.timer}>
                     <div className={styles.timerInner}>

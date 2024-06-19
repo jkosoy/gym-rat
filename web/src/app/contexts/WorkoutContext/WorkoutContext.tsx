@@ -3,10 +3,10 @@
 import { Context, createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Circuit, ExcerciseSet, Workout } from "@/app/types/Workout";
 
-type Status = 'active' | 'recovery' | 'warmup' | 'cooldown' | 'circuit-recovery' | 'complete';
+export type Status = 'active' | 'recovery' | 'warmup' | 'cooldown' | 'circuit-recovery' | 'complete';
 
 type WorkoutProviderProps = {
-  workout: Workout
+  workout?: Workout
 }
 
 type WorkoutContextProps = {
@@ -28,7 +28,15 @@ type WorkoutContextProps = {
 
 export const WorkoutContext = createContext<WorkoutContextProps>({} as WorkoutContextProps)
 
-export function WorkoutProvider({workout, children}: PropsWithChildren<WorkoutProviderProps>) {
+export function WorkoutProvider({workout=undefined, children}: PropsWithChildren<WorkoutProviderProps>) {
+  if(!workout) {
+    return (
+      <>
+        {children}
+      </>
+    )
+  }
+
   const [elapsedTime, setElapsedTime] = useState(0)
   const [status, setStatus] = useState<Status>('warmup')
   const [circuitIndex, setCircuitIndex] = useState(0)

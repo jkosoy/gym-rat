@@ -116,7 +116,7 @@ export async function getWorkout(routine: Routine): Promise<Workout> {
 }
 
 export async function getRoutines(): Promise<Routine[]> {
-  await sleep(5000);
+  await sleep(1000);
 
   return [
     {

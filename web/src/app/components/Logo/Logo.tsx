@@ -4,7 +4,7 @@ import { getRoutines } from "@/app/api/workouts";
 
 import styles from './Logo.module.css';
 
-export async function Logo() { 
+export function Logo() { 
     return (
         <div className={styles.container}>
             <Image

@@ -5,14 +5,22 @@ import { ActiveMovePane } from '../ActiveMovePane';
 import { TimelinePane } from '../TimelinePane';
 import styles from './WorkoutScreen.module.css';
 import { useEffect, useRef } from 'react';
+import { Status } from '@/app/contexts/WorkoutContext';
+
+type AudioMappings = Record<Status, string|undefined>
 
 export function WorkoutScreen() {
     const el = useRef(null);
     const { status } = useWorkout()
-    const recoveryRef = useRef<HTMLAudioElement>(null);
-    const circuitRecoveryRef = useRef<HTMLAudioElement>(null);
-    const activeRef = useRef<HTMLAudioElement>(null);
-    const cooldownRef = useRef<HTMLAudioElement>(null);
+
+    const AUDIO_PATHS:AudioMappings = {
+        "circuit-recovery": "/circuit-recovery.mp3",
+        "active": "/active.mp3",
+        "recovery": "/recovery.mp3",
+        "cooldown": "/cooldown.mp3",
+        "warmup": undefined,
+        "complete": undefined,
+    }
 
     useEffect(() => {
         const rootEl = document.documentElement;
@@ -27,30 +35,18 @@ export function WorkoutScreen() {
     }, [status, el]);
 
     useEffect(() => {
-        function playAudio(url:string) {
-            const a = new Audio(url);
-            a.preload = 'auto';
-            a.pause();
-            a.load();
-            a.play();
+        if(AUDIO_PATHS[status] === undefined) {
+            return
         }
 
-        if(status === "circuit-recovery" && circuitRecoveryRef.current) {
-            playAudio(circuitRecoveryRef.current.src);
-        }
+        const url = AUDIO_PATHS[status];
 
-        if(status === "active" && activeRef.current) {
-            playAudio(activeRef.current.src);
-
-        }
-
-        if(status === "recovery" && recoveryRef.current) {
-            playAudio(recoveryRef.current.src);
-        }
-        if(status === "cooldown" && cooldownRef.current) {
-            playAudio(cooldownRef.current.src);
-        }
-    }, [status, recoveryRef, activeRef, circuitRecoveryRef])
+        const a = new Audio(url);
+        a.preload = 'auto';
+        a.pause();
+        a.load();
+        a.play();
+    }, [status])
     
 
     return(
@@ -58,12 +54,6 @@ export function WorkoutScreen() {
             <div ref={el} className={styles.container}>
                 <ActiveMovePane />
                 <TimelinePane />
-            </div>
-            <div style={{display: 'none'}}>
-                <audio ref={recoveryRef} src='/recovery.mp3' preload="auto" />
-                <audio ref={circuitRecoveryRef} src='/circuit-recovery.mp3' preload="auto" />
-                <audio ref={activeRef} src='/active.mp3' preload="auto" />
-                <audio ref={cooldownRef} src='/cooldown.mp3' preload='auto' />
             </div>
         </>
     )
