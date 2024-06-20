@@ -51,21 +51,22 @@ class MainActivity : ComponentActivity() {
         webView.loadUrl("https://gym-rat-tv.vercel.app/tv")
     }
 
-//    fun initializeBackPress() {
-//        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(inWorkout) {
-//            override fun handleOnBackPressed() {
-//                Log.d("RemoteControl", "Back button pressed")
-//                webView.evaluateJavascript("exitWorkout();", null)
-//            }
-//        })
-//    }
+    private fun initializeBackPress() {
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(inWorkout) {
+            override fun handleOnBackPressed() {
+                Log.d("RemoteControl", "Back button pressed")
+                val webView = getWebView();
+                webView.evaluateJavascript("exitWorkout();", null)
+            }
+        })
+    }
 
     @OptIn(ExperimentalTvMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         loadPage()
-//        initializeBackPress()
+        initializeBackPress()
     }
 
     // handle and forward on arrow clicks

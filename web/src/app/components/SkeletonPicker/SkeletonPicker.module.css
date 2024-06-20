@@ -12,6 +12,7 @@
     overflow: hidden;
     background-color: rgba(0,0,0,0.25);
     border-radius: calc(4px * var(--scale));
+    top: calc(70px * var(--scale)); /* magic number for loading */
 }
 
 .skeleton::after {

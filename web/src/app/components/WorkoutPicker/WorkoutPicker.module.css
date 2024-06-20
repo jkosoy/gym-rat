@@ -1,0 +1,52 @@
+.pickerContainer {
+    width: 100vw;
+    display: flex;
+    flex-direction: column;
+    --selected-routine-index: 0;
+    --picker-gap: 12px;
+}
+
+.nextButton { 
+    order: 3;
+    place-self: center;
+    transform-origin: center;
+    transform: rotate(90deg);
+}
+
+.prevButton { 
+    order: 1; 
+    place-self: center;
+    transform-origin: center;
+    transform: rotate(-90deg);
+}
+
+.routineContainer { 
+    order: 2;
+    flex:1 0 calc(50px * var(--scale));
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.routine {
+    flex: 1 0 100%;
+    transform: translateY(calc(-1 * var(--selected-routine-index, 0) * 100%));
+    transition: transform 200ms cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    display: flex;
+    place-content: center;
+    place-items: center;
+    position: relative;
+    gap: calc(var(--picker-gap) * var(--scale));
+}
+
+.routine h2 {
+    min-width: 200px;
+    text-align: center;
+    font-size: calc(1.5rem * var(--scale));
+    font-family: var(--font-family);
+    font-weight: var(--font-weight-normal);
+    background: rgba(0,0,0,0.125);
+    border-radius: calc(8px * var(--scale));
+    display: inline-block;
+    padding: calc(10px * var(--scale));
+}

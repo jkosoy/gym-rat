@@ -1,12 +1,11 @@
 import { useEffect } from "react";
 
 interface KeyboardParams {
-  key: string
   onKeyDown?: () => void,
   onKeyUp?: () => void,
 }
 
-export function useKeyboard({key, onKeyDown=undefined, onKeyUp=undefined}: KeyboardParams) {
+export function useKeyboard(key:string, {onKeyDown=undefined, onKeyUp=undefined}: KeyboardParams) {
     useEffect(() => {
         function keyDownHandler(e: globalThis.KeyboardEvent) {
             if(onKeyDown === undefined) {
@@ -28,9 +27,12 @@ export function useKeyboard({key, onKeyDown=undefined, onKeyUp=undefined}: Keybo
             }
         }
 
+        document.addEventListener("keydown", keyDownHandler);
+        document.addEventListener("keyup", keyUpHandler);
+
         return () => {
             document.removeEventListener("keydown", keyDownHandler);
             document.removeEventListener("keyup", keyUpHandler);
         }
-    }, [])
+    }, [onKeyDown, onKeyUp])
 }

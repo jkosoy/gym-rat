@@ -15,15 +15,23 @@ type AppProps = {
 export function App({isTV=false}: PropsWithoutRef<AppProps>) {
     const { workout } = useWorkout();
     const { isAndroid, inWorkout, setInWorkout } = useAndroid();
-    const screen = workout ? <WorkoutScreen /> : <MenuScreen />;
-    
+
+    const screen = useMemo(() => {
+        if(!workout) {
+            return <MenuScreen />
+        }
+
+        return <WorkoutScreen />
+    }, [workout])
+
     useEffect(() => {
+        console.log(workout);
         setInWorkout(workout !== undefined);
     }, [workout]);
 
     return (
         <DeviceProvider isTV={isTV}>
-            <WorkoutProvider workout={workout}>
+            <WorkoutProvider>
                 {screen}
             </WorkoutProvider>        
         </DeviceProvider>

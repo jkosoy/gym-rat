@@ -21,8 +21,8 @@ export default function RootLayout({
   
   return (
     <html lang="en" style={{
-      "--font-family": dm_sans.style.fontFamily} as CSSProperties
-    }>
+      "--font-family": dm_sans.style.fontFamily
+    } as CSSProperties}>
       <body>{children}</body>
     </html>
   );

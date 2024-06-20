@@ -3,7 +3,7 @@
 }
 
 .image {
-    width: calc(400px * var(--scale));
+    width: calc(200px * var(--scale));
     height:auto;
 }
 

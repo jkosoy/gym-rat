@@ -6,15 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "component": "tsx src/cli/create-component.ts",
+    "context": "tsx src/cli/create-context.ts",
+    "hook": "tsx src/cli/create-hook.ts"
   },
   "dependencies": {
     "@notionhq/client": "^2.2.15",
     "classnames": "^2.5.1",
     "next": "14.2.3",
     "react": "^18",
-    "react-dom": "^18",
-    "use-sound": "^4.0.1"
+    "react-dom": "^18"
   },
   "devDependencies": {
     "@types/node": "^20",
@@ -22,6 +24,8 @@
     "@types/react-dom": "^18",
     "eslint": "^8",
     "eslint-config-next": "14.2.3",
-    "typescript": "^5"
+    "tsx": "^4.15.6",
+    "typescript": "^5",
+    "yargs": "^17.7.2"
   }
 }

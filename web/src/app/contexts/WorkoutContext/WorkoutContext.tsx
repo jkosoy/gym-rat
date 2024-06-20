@@ -1,16 +1,12 @@
 "use client";
 
-import { Context, createContext, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { Context, createContext, Dispatch, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Circuit, ExcerciseSet, Workout } from "@/app/types/Workout";
 
 export type Status = 'active' | 'recovery' | 'warmup' | 'cooldown' | 'circuit-recovery' | 'complete';
 
-type WorkoutProviderProps = {
-  workout?: Workout
-}
-
 type WorkoutContextProps = {
-  workout: Workout
+  workout?: Workout
   elapsedTime: number,
   circuitIndex: number,
   setIndex: number,
@@ -23,25 +19,19 @@ type WorkoutContextProps = {
   getCurrentCircuit: Function
   getCurrentSet: Function,
   togglePlayPause: Function,
-  totalWorkoutTime: number
+  totalWorkoutTime: number,
+  setWorkout: Dispatch<Workout|undefined>
 }
 
 export const WorkoutContext = createContext<WorkoutContextProps>({} as WorkoutContextProps)
 
-export function WorkoutProvider({workout=undefined, children}: PropsWithChildren<WorkoutProviderProps>) {
-  if(!workout) {
-    return (
-      <>
-        {children}
-      </>
-    )
-  }
-
+export function WorkoutProvider({children}: PropsWithChildren) {
   const [elapsedTime, setElapsedTime] = useState(0)
   const [status, setStatus] = useState<Status>('warmup')
   const [circuitIndex, setCircuitIndex] = useState(0)
   const [setIndex, setSetIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
+  const [workout, setWorkout] = useState<Workout>()
 
   // convenience methods
   const pause = useCallback(() => { 
@@ -69,15 +59,28 @@ export function WorkoutProvider({workout=undefined, children}: PropsWithChildren
     pause();
   },[isPaused, pause, play])
 
-  const getCurrentCircuit = useCallback(():Circuit => {
+  const getCurrentCircuit = useCallback(():Circuit|undefined => {
+    if(!workout) {
+      return;
+    }
+
     return workout.circuits[circuitIndex]
   },[workout, circuitIndex])
 
-  const getCurrentSet = useCallback(():ExcerciseSet => {
-    return getCurrentCircuit().sets[setIndex]
+  const getCurrentSet = useCallback(():ExcerciseSet|undefined => {
+    const currenctCircuit = getCurrentCircuit()
+    if(!currenctCircuit) {
+      return
+    }
+
+    return currenctCircuit.sets[setIndex]
   }, [getCurrentCircuit, setIndex])
 
   const nextSet = useCallback(() => {
+    if(!workout) {
+      return;
+    }
+
     setElapsedTime(0);
     // account for total time
 
@@ -97,13 +100,13 @@ export function WorkoutProvider({workout=undefined, children}: PropsWithChildren
       return;
     }
 
-    if(status === 'active' && getCurrentSet().recoverySeconds > 0) {
+    if(status === 'active' && getCurrentSet()!.recoverySeconds > 0) {
       setStatus('recovery');
       return;
     }
 
     let nextSetIndex = setIndex+1;
-    if(nextSetIndex >= getCurrentCircuit().sets.length) {
+    if(nextSetIndex >= getCurrentCircuit()!.sets.length) {
       if(['active', 'recovery'].includes(status)) {
         setStatus('circuit-recovery');
         return;
@@ -126,6 +129,10 @@ export function WorkoutProvider({workout=undefined, children}: PropsWithChildren
   },[workout,circuitIndex,getCurrentCircuit,getCurrentSet,setIndex,status])
 
   const prevSet = useCallback(() => {
+    if(!workout) {
+      return;
+    }
+
     setElapsedTime(0);
     // account for total time
 
@@ -172,12 +179,17 @@ export function WorkoutProvider({workout=undefined, children}: PropsWithChildren
       return;
     }
 
-    setStatus(getCurrentSet().recoverySeconds > 0 ? "recovery" : "active");
+    setStatus(getCurrentSet()!.recoverySeconds > 0 ? "recovery" : "active");
   },[workout,circuitIndex,getCurrentSet,setIndex,status])
 
 
   const totalWorkoutTime = useMemo(() => {
     let time = 0;
+
+    if(!workout) {
+      return time;
+    }
+
     workout.circuits.forEach((circuit, idx) => {
       circuit.sets.forEach(set => {
         time += set.activeSeconds + set.recoverySeconds;
@@ -194,6 +206,10 @@ export function WorkoutProvider({workout=undefined, children}: PropsWithChildren
 
   // timer
   useEffect(() => {
+    if(!workout) {
+      return;
+    }
+
     const interval = setInterval(() => {
       if(status === 'complete' || isPaused) {
         return;
@@ -204,9 +220,9 @@ export function WorkoutProvider({workout=undefined, children}: PropsWithChildren
       const circuit = getCurrentCircuit();
       const set = getCurrentSet();
 
-      let seconds = set.activeSeconds;
+      let seconds = set!.activeSeconds;
       if(['warmup', 'cooldown', 'recovery'].includes(status)) {
-        seconds = set.recoverySeconds;
+        seconds = set!.recoverySeconds;
       }
 
       const timeRemaining = seconds - ct;
@@ -222,7 +238,8 @@ export function WorkoutProvider({workout=undefined, children}: PropsWithChildren
       clearInterval(interval);
     }
 
-  }, [isPaused, elapsedTime, status, getCurrentSet, getCurrentCircuit, nextSet])
+  }, [workout, isPaused, elapsedTime, status, getCurrentSet, getCurrentCircuit, nextSet])
+
 
   return (<WorkoutContext.Provider 
     value={{
@@ -239,6 +256,7 @@ export function WorkoutProvider({workout=undefined, children}: PropsWithChildren
       getCurrentCircuit,
       getCurrentSet,
       togglePlayPause,
+      setWorkout,
       totalWorkoutTime
     }}>
       {children}

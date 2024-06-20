@@ -10,15 +10,11 @@
     flex-direction: column;
     place-items: center;
     height: calc(100% - 200px);
+    gap: calc(30px * var(--scale));
   }
   
   .logo {
     flex:0;
     display:flex;
     justify-content: center;
-  }
-  
-  /* only needed because the logo was AI generated and has a purple background */
-  .picker {
-    transform: translateY(-20px);
   }
