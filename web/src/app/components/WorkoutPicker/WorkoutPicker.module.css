@@ -4,6 +4,7 @@
     flex-direction: column;
     --selected-routine-index: 0;
     --picker-gap: 12px;
+    transform: translate3d(0,0,0);
 }
 
 .nextButton { 
@@ -39,8 +40,8 @@
     gap: calc(var(--picker-gap) * var(--scale));
 }
 
-.routine h2 {
-    min-width: 200px;
+.routine button {
+    min-width: calc(300px * var(--scale));
     text-align: center;
     font-size: calc(1.5rem * var(--scale));
     font-family: var(--font-family);
@@ -49,4 +50,7 @@
     border-radius: calc(8px * var(--scale));
     display: inline-block;
     padding: calc(10px * var(--scale));
+    border: none;
+    color: #fff;
+    cursor: pointer;
 }

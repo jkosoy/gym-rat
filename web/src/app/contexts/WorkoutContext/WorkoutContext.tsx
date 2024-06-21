@@ -20,7 +20,8 @@ type WorkoutContextProps = {
   getCurrentSet: Function,
   togglePlayPause: Function,
   totalWorkoutTime: number,
-  setWorkout: Dispatch<Workout|undefined>
+  setWorkout: Dispatch<Workout|undefined>,
+  closeWorkout: Function
 }
 
 export const WorkoutContext = createContext<WorkoutContextProps>({} as WorkoutContextProps)
@@ -182,7 +183,6 @@ export function WorkoutProvider({children}: PropsWithChildren) {
     setStatus(getCurrentSet()!.recoverySeconds > 0 ? "recovery" : "active");
   },[workout,circuitIndex,getCurrentSet,setIndex,status])
 
-
   const totalWorkoutTime = useMemo(() => {
     let time = 0;
 
@@ -203,6 +203,14 @@ export function WorkoutProvider({children}: PropsWithChildren) {
     return time;
   }, [workout])
 
+  const closeWorkout = useCallback(() => {
+    setElapsedTime(0);
+    setStatus("warmup");
+    setCircuitIndex(0);
+    setSetIndex(0);
+    setIsPaused(false);
+    setWorkout(undefined);
+  }, [setElapsedTime,setCircuitIndex,setSetIndex,setIsPaused,setWorkout])
 
   // timer
   useEffect(() => {
@@ -240,7 +248,6 @@ export function WorkoutProvider({children}: PropsWithChildren) {
 
   }, [workout, isPaused, elapsedTime, status, getCurrentSet, getCurrentCircuit, nextSet])
 
-
   return (<WorkoutContext.Provider 
     value={{
       workout,
@@ -257,7 +264,8 @@ export function WorkoutProvider({children}: PropsWithChildren) {
       getCurrentSet,
       togglePlayPause,
       setWorkout,
-      totalWorkoutTime
+      totalWorkoutTime,
+      closeWorkout
     }}>
       {children}
     </WorkoutContext.Provider>

@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import com.jkosoy.gymrat.ui.theme.GymRatTheme
 import kotlin.math.ceil
+import android.os.Build
 
 
 class MainActivity : ComponentActivity() {
@@ -24,7 +25,8 @@ class MainActivity : ComponentActivity() {
 
     inner class GymRatWebAppInterface {
         @JavascriptInterface
-        fun setInWorkout(state: Boolean) {
+        public fun setInWorkout(state: Boolean) {
+            Log.d("Gym Rat", "Workout State is $state");
             inWorkout = state;
         }
     }
@@ -48,15 +50,46 @@ class MainActivity : ComponentActivity() {
         webView.addJavascriptInterface(GymRatWebAppInterface(), "Android")
         webView.clearCache(true)
         webView.setInitialScale(1)
-        webView.loadUrl("https://gym-rat-tv.vercel.app/tv")
+        val url = if (isEmulator()) "http://10.0.2.2:3000" else "https://gym-rat-tv.vercel.app/"
+        Log.d("Gym Rat","Loading :: $url")
+        webView.loadUrl("$url/tv")
+    }
+
+
+    private fun isEmulator(): Boolean {
+        return (Build.FINGERPRINT.startsWith("generic") ||
+                Build.FINGERPRINT.startsWith("unknown") ||
+                Build.MODEL.contains("google_sdk") ||
+                Build.MODEL.contains("Emulator") ||
+                Build.MODEL.contains("Android SDK built for x86") ||
+                Build.MANUFACTURER.contains("Genymotion") ||
+                Build.BRAND.startsWith("generic") && Build.DEVICE.startsWith("generic") ||
+                "google_sdk" == Build.PRODUCT ||
+                Build.HARDWARE.contains("ranchu") ||
+                Build.HARDWARE.contains("goldfish") ||
+                Build.HARDWARE.contains("vbox86") ||
+                Build.PRODUCT.contains("sdk") ||
+                Build.PRODUCT.contains("sdk_gphone") ||
+                Build.PRODUCT.contains("sdk_x86") ||
+                Build.PRODUCT.contains("sdk_google") ||
+                Build.PRODUCT.contains("vbox86p") ||
+                Build.PRODUCT.contains("emulator") ||
+                Build.PRODUCT.contains("simulator"))
     }
 
     private fun initializeBackPress() {
-        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(inWorkout) {
+        onBackPressedDispatcher.addCallback(this, object: OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                Log.d("RemoteControl", "Back button pressed")
-                val webView = getWebView();
-                webView.evaluateJavascript("exitWorkout();", null)
+                Log.d("Gym Rat", "Back button pressed")
+
+                if(inWorkout) {
+                    val webView = getWebView();
+                    webView.evaluateJavascript("exitWorkout();", null)
+                }
+                else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                }
             }
         })
     }
@@ -75,27 +108,27 @@ class MainActivity : ComponentActivity() {
 
         when (keyCode) {
             KeyEvent.KEYCODE_DPAD_LEFT -> {
-                Log.d("RemoteControl", "Left arrow pressed")
+                Log.d("Gym Rat", "Left arrow pressed")
                 key = "ArrowLeft";
             }
 
             KeyEvent.KEYCODE_DPAD_RIGHT -> {
-                Log.d("RemoteControl", "Right arrow pressed")
+                Log.d("Gym Rat", "Right arrow pressed")
                 key = "ArrowRight";
             }
 
             KeyEvent.KEYCODE_DPAD_UP -> {
-                Log.d("RemoteControl", "Up arrow pressed")
+                Log.d("Gym Rat", "Up arrow pressed")
                 key = "ArrowUp";
             }
 
             KeyEvent.KEYCODE_DPAD_DOWN -> {
-                Log.d("RemoteControl", "Down arrow pressed")
+                Log.d("Gym Rat", "Down arrow pressed")
                 key = "ArrowDown";
             }
 
             KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_DPAD_CENTER -> {
-                Log.d("RemoteControl", "Enter button pressed")
+                Log.d("Gym Rat", "Enter button pressed")
                 key = "Enter";
             }
         }
@@ -117,8 +150,8 @@ class MainActivity : ComponentActivity() {
         super.onPause()
         lastPause = System.currentTimeMillis()
 
-        //val webView: WebView = findViewById(R.id.webview)
-        //webView.loadUrl("javascript:(function() { onPause(); })();");
+        val webView: WebView = findViewById(R.id.webview)
+        webView.evaluateJavascript("onPause();", null)
     }
 
     override fun onResume() {
@@ -132,7 +165,7 @@ class MainActivity : ComponentActivity() {
             return
         }
 
-//        webView.loadUrl("javascript:(function() { onResume(); })();");
+        webView.evaluateJavascript("onResume();", null)
     }
 }
 

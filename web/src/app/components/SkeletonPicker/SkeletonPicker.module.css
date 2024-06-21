@@ -2,6 +2,8 @@
     width: calc(200px * var(--scale));
     height: calc(8px * var(--scale));
     opacity: 0.5;
+    transform: translate3d(0,0,0);
+    backface-visibility: hidden;
 }
 
 .skeleton {

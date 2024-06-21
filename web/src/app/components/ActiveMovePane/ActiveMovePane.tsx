@@ -17,7 +17,8 @@ export function ActiveMovePane() {
         elapsedTime, 
         togglePlayPause,
         nextSet,
-        prevSet
+        prevSet,
+        closeWorkout
     } = useWorkout();
 
     const { isTV } = useDevice()
@@ -84,6 +85,10 @@ export function ActiveMovePane() {
         nextSet();
     }
 
+    const handleCloseClick = () => {
+        closeWorkout();
+    }
+
     const closeClassName = classNames.bind(styles)({
         controlsInnerContainer: true,
         hidden: isTV
@@ -93,7 +98,7 @@ export function ActiveMovePane() {
         <div className={styles.container}>
             <div className={styles.controlsContainer}>
                 <div className={closeClassName}>
-                    <ButtonWithIcon icon="close" />
+                    <ButtonWithIcon icon="close" onClick={handleCloseClick} />
                 </div>
             </div>
             <div className={styles.mainTimerContainer}>

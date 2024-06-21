@@ -23,18 +23,6 @@ export function WorkoutScreen() {
     }
 
     useEffect(() => {
-        const rootEl = document.documentElement;
-
-        // make sure we go back to purple
-        if(!el.current) {
-            rootEl.style.setProperty('--color-background', `var(--color-background-default`);
-            return;
-        }
-
-        rootEl.style.setProperty('--color-background', `var(--color-background-${status})`);
-    }, [status, el]);
-
-    useEffect(() => {
         if(AUDIO_PATHS[status] === undefined) {
             return
         }
@@ -46,7 +34,7 @@ export function WorkoutScreen() {
         a.pause();
         a.load();
         a.play();
-    }, [status])
+    }, [status, AUDIO_PATHS])
     
 
     return(

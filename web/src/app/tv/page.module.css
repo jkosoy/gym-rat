@@ -5,3 +5,7 @@
   pointer-events: none;
   user-select: none;
 }
+
+.main * {
+  outline: none;
+}

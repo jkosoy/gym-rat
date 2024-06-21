@@ -3,12 +3,17 @@ import { Routine } from "@/app/types/Workout";
 import { SkeletonPicker } from '@/app/components/SkeletonPicker';
 
 import styles from './WorkoutPicker.module.css';
-import { CSSProperties, useCallback, useEffect, useMemo, useState } from "react";
+import { CSSProperties, PropsWithoutRef, useCallback, useEffect, useMemo, useState } from "react";
 import { ButtonWithIcon } from "../ButtonWithIcon";
 import { useKeyboard } from "@/app/hooks/useKeyboard";
 import { useWorkout } from "@/app/hooks/useWorkout";
 
-export function WorkoutPicker() {
+type WorkoutPickerProps = {
+    callback: Function
+}
+
+export function WorkoutPicker({callback}: PropsWithoutRef<WorkoutPickerProps>) {
+    const [isLoading, setIsLoading] = useState(true);
     const [routines, setRoutines] = useState<Routine[]>([]);
     const [selectedRoutine, setSelectedRoutine] = useState<Routine|undefined>();
     const { setWorkout } = useWorkout()
@@ -38,13 +43,14 @@ export function WorkoutPicker() {
     }, [routines, selectedRoutine, setSelectedRoutine])
 
     const selectRoutine = useCallback(async () => {
-        if(!selectedRoutine) {
+        if(!selectedRoutine || isLoading) {
             return;
         }
 
+        setIsLoading(true);
         const workout = await getWorkout(selectedRoutine);
-        setWorkout(workout);
-    }, [selectedRoutine, setWorkout]);
+        callback(workout);
+    }, [isLoading, setIsLoading, selectedRoutine, setWorkout]);
 
     useKeyboard("ArrowUp", { onKeyDown: prevRoutine })
     useKeyboard("ArrowDown", { onKeyDown: nextRoutine })
@@ -54,11 +60,12 @@ export function WorkoutPicker() {
         const routines = await getRoutines();
         setRoutines(routines);
         setSelectedRoutine(routines[0]);
-    }, [routines, setRoutines, setSelectedRoutine]);
+        setIsLoading(false);
+    }, [setRoutines, setSelectedRoutine, setIsLoading]);
 
     useEffect(() => {
         loadRoutines();
-    }, [])
+    }, [loadRoutines])
 
     const routineEls = useMemo(() => {
         if(routines.length === 0) {
@@ -67,13 +74,13 @@ export function WorkoutPicker() {
 
         return routines.map(routine => (
             <div key={`rid_${routine.id}`} className={styles.routine}>
-                <h2>{routine.name}</h2>
+                <button onClick={selectRoutine}>{routine.name}</button>
             </div>
         ));
     }, [routines]);
 
     const computedComponent = (() => {
-        if(routines.length === 0) {
+        if(isLoading || routines.length === 0) {
             return <SkeletonPicker />
         }
 

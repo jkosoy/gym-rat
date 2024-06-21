@@ -137,7 +137,7 @@ export async function getTestRoutines(): Promise<Routine[]> {
   ]
 }
 
-export async function getRoutines(): Promise<Routine[]> {
+export async function getRoutines(): Promise<Routine[]> {  
   const rawRoutines = await notion.databases.query({
     database_id: process.env.NOTION_DATABASE!,
     sorts: [
@@ -164,5 +164,5 @@ export async function getRoutines(): Promise<Routine[]> {
     }
   }).filter(routine => routine !== undefined);
 
-  return routines;
+  return routines as Routine[];
 }

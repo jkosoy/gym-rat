@@ -11,9 +11,7 @@ export function useAndroid() {
     const [inWorkout, setInWorkout] = useState(false);
 
     useEffect(() => {
-        if(window.Android) {
-            setIsAndroid(true);
-        }
+        setIsAndroid(window.Android !== undefined);
     }, [setIsAndroid])
 
     useEffect(() => {

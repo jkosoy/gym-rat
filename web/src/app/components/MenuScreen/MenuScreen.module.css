@@ -3,18 +3,55 @@
     height: 100%;
     display: grid;
     place-items: center;
+}
+
+.containerContent {
+  display:flex;
+  flex-direction: column;
+  place-items: center;
+  height: calc(100% - 200px);
+  gap: calc(30px * var(--scale));
+}
+
+.logo {
+  flex:0;
+  display:flex;
+  justify-content: center;
+  animation: in 800ms cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
+}
+
+.picker {
+  opacity: 0;
+  animation: in 500ms cubic-bezier(0.215, 0.610, 0.355, 1.000) 300ms forwards;
+}
+
+.out .logo {
+  animation: out 300ms cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
+}
+
+.out .picker {
+  animation: out 300ms cubic-bezier(0.215, 0.610, 0.355, 1.000) 100ms forwards;
+}
+
+
+@keyframes in {
+  from {
+      opacity: 0;
+      transform: scale(1.08);
   }
-  
-  .containerContent {
-    display:flex;
-    flex-direction: column;
-    place-items: center;
-    height: calc(100% - 200px);
-    gap: calc(30px * var(--scale));
+  to {
+      opacity: 1;
+      transform: scale(1);
   }
-  
-  .logo {
-    flex:0;
-    display:flex;
-    justify-content: center;
+}
+
+@keyframes out {
+  from {
+      opacity: 1;
+      transform: scale(1);
   }
+  to {
+      opacity: 0;
+      transform: scale(1.08);
+  }
+}

@@ -13,8 +13,8 @@ type AppProps = {
 }
 
 export function App({isTV=false}: PropsWithoutRef<AppProps>) {
-    const { workout } = useWorkout();
-    const { isAndroid, inWorkout, setInWorkout } = useAndroid();
+    const { workout, status } = useWorkout();
+    const { setInWorkout } = useAndroid();
 
     const screen = useMemo(() => {
         if(!workout) {
@@ -25,15 +25,17 @@ export function App({isTV=false}: PropsWithoutRef<AppProps>) {
     }, [workout])
 
     useEffect(() => {
-        console.log(workout);
         setInWorkout(workout !== undefined);
-    }, [workout]);
+    }, [workout, setInWorkout]);
+
+    useEffect(() => {
+        const rootEl = document.documentElement;
+        rootEl.style.setProperty('--color-background', `var(--color-background-${status})`);
+    }, [status]);
 
     return (
         <DeviceProvider isTV={isTV}>
-            <WorkoutProvider>
-                {screen}
-            </WorkoutProvider>        
+            {screen}
         </DeviceProvider>
     )
 }

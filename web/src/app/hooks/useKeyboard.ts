@@ -34,5 +34,5 @@ export function useKeyboard(key:string, {onKeyDown=undefined, onKeyUp=undefined}
             document.removeEventListener("keydown", keyDownHandler);
             document.removeEventListener("keyup", keyUpHandler);
         }
-    }, [onKeyDown, onKeyUp])
+    }, [key, onKeyDown, onKeyUp])
 }
