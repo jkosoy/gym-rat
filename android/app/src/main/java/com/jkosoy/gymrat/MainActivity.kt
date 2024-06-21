@@ -1,7 +1,6 @@
 package com.jkosoy.gymrat
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.DisplayMetrics
 import android.util.Log
 import android.view.KeyEvent
 import android.webkit.JavascriptInterface
@@ -12,33 +11,31 @@ import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.tv.material3.ExperimentalTvMaterial3Api
 import com.jkosoy.gymrat.ui.theme.GymRatTheme
-import kotlin.math.ceil
 import android.os.Build
 
 
 class MainActivity : ComponentActivity() {
-    private var lastPause: Long = -1;
-    private val RESTART_TIME: Long = 15 * 60 * 1000; // 2 hours
-    private var inWorkout = false;
+    private var lastPause: Long = -1
+    private val refreshTimeout: Long = 15 * 60 * 1000 // 15 minutes
+    private var inWorkout = false
 
     inner class GymRatWebAppInterface {
         @JavascriptInterface
-        public fun setInWorkout(state: Boolean) {
-            Log.d("Gym Rat", "Workout State is $state");
-            inWorkout = state;
+        fun setInWorkout(state: Boolean) {
+            Log.d("Gym Rat", "Workout State is $state")
+            inWorkout = state
         }
     }
 
     private fun getWebView():WebView {
-        val webView: WebView = findViewById(R.id.webview);
-        return webView;
+        val webView: WebView = findViewById(R.id.webview)
+        return webView
     }
 
     @SuppressLint("SetJavaScriptEnabled")
     fun loadPage() {
-        val webView = getWebView();
+        val webView = getWebView()
         webView.settings.javaScriptEnabled = true
         webView.settings.useWideViewPort = true
         webView.settings.loadWithOverviewMode = true
@@ -83,7 +80,7 @@ class MainActivity : ComponentActivity() {
                 Log.d("Gym Rat", "Back button pressed")
 
                 if(inWorkout) {
-                    val webView = getWebView();
+                    val webView = getWebView()
                     webView.evaluateJavascript("exitWorkout();", null)
                 }
                 else {
@@ -94,7 +91,6 @@ class MainActivity : ComponentActivity() {
         })
     }
 
-    @OptIn(ExperimentalTvMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -104,68 +100,76 @@ class MainActivity : ComponentActivity() {
 
     // handle and forward on arrow clicks
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        var key:String = "";
+        var key = ""
 
         when (keyCode) {
             KeyEvent.KEYCODE_DPAD_LEFT -> {
                 Log.d("Gym Rat", "Left arrow pressed")
-                key = "ArrowLeft";
+                key = "ArrowLeft"
             }
 
             KeyEvent.KEYCODE_DPAD_RIGHT -> {
                 Log.d("Gym Rat", "Right arrow pressed")
-                key = "ArrowRight";
+                key = "ArrowRight"
             }
 
             KeyEvent.KEYCODE_DPAD_UP -> {
                 Log.d("Gym Rat", "Up arrow pressed")
-                key = "ArrowUp";
+                key = "ArrowUp"
             }
 
             KeyEvent.KEYCODE_DPAD_DOWN -> {
                 Log.d("Gym Rat", "Down arrow pressed")
-                key = "ArrowDown";
+                key = "ArrowDown"
             }
 
             KeyEvent.KEYCODE_ENTER, KeyEvent.KEYCODE_DPAD_CENTER -> {
                 Log.d("Gym Rat", "Enter button pressed")
-                key = "Enter";
+                key = "Enter"
             }
         }
 
         if(key !== "") {
-            val webView = getWebView();
+            val webView = getWebView()
             webView.evaluateJavascript(
                 "document.dispatchEvent(new KeyboardEvent('keydown', {key: $key}));",
                 null
             )
 
-            return true;
+            return true
         }
 
         return super.onKeyDown(keyCode, event)
     }
 
     override fun onPause() {
-        super.onPause()
-        lastPause = System.currentTimeMillis()
+        Log.d("Gym Rat", "Pausing workout.")
 
+        lastPause = System.currentTimeMillis()
         val webView: WebView = findViewById(R.id.webview)
         webView.evaluateJavascript("onPause();", null)
+
+        super.onPause()
     }
 
     override fun onResume() {
-        super.onResume()
         val now:Long = System.currentTimeMillis()
         val delta:Long = now - lastPause
         val webView: WebView = findViewById(R.id.webview)
+        Log.d("Gym Rat", "lastPause is $lastPause, now is $now, delta is $delta, refreshTimeout is $refreshTimeout")
 
-        if (delta > RESTART_TIME) {
+        if (delta > refreshTimeout && lastPause > -1) {
+            Log.d("Gym Rat", "Timed out. Reloading.")
             webView.reload()
+            super.onResume()
+
             return
         }
 
+        Log.d("Gym Rat", "Resuming workout.")
         webView.evaluateJavascript("onResume();", null)
+
+        super.onResume()
     }
 }
 

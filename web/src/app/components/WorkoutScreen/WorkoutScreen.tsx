@@ -13,16 +13,16 @@ export function WorkoutScreen() {
     const el = useRef(null);
     const { status } = useWorkout()
 
-    const AUDIO_PATHS:AudioMappings = {
-        "circuit-recovery": "/circuit-recovery.mp3",
-        "active": "/active.mp3",
-        "recovery": "/recovery.mp3",
-        "cooldown": "/cooldown.mp3",
-        "warmup": undefined,
-        "complete": undefined,
-    }
-
     useEffect(() => {
+        const AUDIO_PATHS:AudioMappings = {
+            "circuit-recovery": "/circuit-recovery.mp3",
+            "active": "/active.mp3",
+            "recovery": "/recovery.mp3",
+            "cooldown": "/cooldown.mp3",
+            "warmup": undefined,
+            "complete": undefined,
+        }
+    
         if(AUDIO_PATHS[status] === undefined) {
             return
         }
@@ -34,7 +34,7 @@ export function WorkoutScreen() {
         a.pause();
         a.load();
         a.play();
-    }, [status, AUDIO_PATHS])
+    }, [status])
     
 
     return(

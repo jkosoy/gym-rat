@@ -19,7 +19,7 @@ export function useAndroid() {
             // @ts-ignore: Custom binding for our native Android app, not worth adjusting 
             window.Android.setInWorkout(inWorkout);
         }
-    }, [inWorkout, setInWorkout, isAndroid])
+    }, [inWorkout, setInWorkout, isAndroid]);
 
     return { inWorkout, setInWorkout, isAndroid };
 }

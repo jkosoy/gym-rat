@@ -40,7 +40,7 @@ export function MenuScreen() {
     }
 
     setWorkout(selectedWorkout);
-  }, [selectedWorkout])
+  }, [selectedWorkout, setWorkout])
 
   return (
       <div className={className} onAnimationEnd={handleAnimationEnd}>

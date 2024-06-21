@@ -1,4 +1,4 @@
 .image {
-    width: calc(200px * var(--scale));
+    width: calc(350px * var(--scale));
     height:auto;
 }

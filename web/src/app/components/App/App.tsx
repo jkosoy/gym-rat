@@ -6,7 +6,7 @@ import { DeviceProvider } from "@/app/contexts/DeviceContext";
 import { WorkoutProvider } from "@/app/contexts/WorkoutContext";
 import { useAndroid } from "@/app/hooks/useAndroid";
 import { useWorkout } from "@/app/hooks/useWorkout";
-import { PropsWithoutRef, useEffect, useMemo, useState } from "react";
+import { PropsWithoutRef, useCallback, useEffect, useMemo, useState } from "react";
 
 type AppProps = {
     isTV?:boolean

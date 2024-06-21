@@ -50,7 +50,7 @@ export function WorkoutPicker({callback}: PropsWithoutRef<WorkoutPickerProps>) {
         setIsLoading(true);
         const workout = await getWorkout(selectedRoutine);
         callback(workout);
-    }, [isLoading, setIsLoading, selectedRoutine, setWorkout]);
+    }, [isLoading, setIsLoading, selectedRoutine, callback]);
 
     useKeyboard("ArrowUp", { onKeyDown: prevRoutine })
     useKeyboard("ArrowDown", { onKeyDown: nextRoutine })
@@ -77,7 +77,7 @@ export function WorkoutPicker({callback}: PropsWithoutRef<WorkoutPickerProps>) {
                 <button onClick={selectRoutine}>{routine.name}</button>
             </div>
         ));
-    }, [routines]);
+    }, [routines, selectRoutine]);
 
     const computedComponent = (() => {
         if(isLoading || routines.length === 0) {
@@ -95,7 +95,9 @@ export function WorkoutPicker({callback}: PropsWithoutRef<WorkoutPickerProps>) {
                     <ButtonWithIcon icon="play" onClick={nextRoutine}/>
                 </div>
                 <div className={styles.routineContainer}>
-                    {routineEls}
+                    <div className={styles.routineScroller}>
+                        {routineEls}
+                    </div>
                 </div>
             </div>
         )

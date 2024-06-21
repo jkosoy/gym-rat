@@ -6,6 +6,17 @@ import { Circuit, ExcerciseSet } from '@/app/types/Workout';
 import { ButtonWithIcon } from '../ButtonWithIcon';
 import classNames from 'classnames/bind';
 import { useDevice } from '@/app/hooks/useDevice';
+import { useAndroid } from '@/app/hooks/useAndroid';
+import { useCallback, useEffect } from 'react';
+import { useKeyboard } from '@/app/hooks/useKeyboard';
+
+declare global {
+    interface Window { 
+        exitWorkout: () => void, 
+        onPause: () => void,
+        onResume: () => void
+    }
+}
 
 export function ActiveMovePane() {
     const { 
@@ -18,10 +29,13 @@ export function ActiveMovePane() {
         togglePlayPause,
         nextSet,
         prevSet,
-        closeWorkout
+        closeWorkout,
+        play,
+        pause
     } = useWorkout();
 
     const { isTV } = useDevice()
+    const { isAndroid } = useAndroid();
 
     let totalTime = 0;
 
@@ -89,9 +103,36 @@ export function ActiveMovePane() {
         nextSet();
     }
 
-    const handleCloseClick = () => {
+    // gross
+    useKeyboard("Enter", { onKeyDown: handleOnClick })
+    useKeyboard("ArrowLeft", { onKeyDown: handlePrevClick })
+    useKeyboard("ArrowRight", { onKeyDown: handleNextClick })
+
+    const handleCloseClick = useCallback(() => {
         closeWorkout();
-    }
+    }, [closeWorkout])
+
+    const handleResume = useCallback(() => {
+        if(!isPaused) {
+            return;
+        }
+
+        play();
+    }, [isPaused, play])
+
+    const handlePause = useCallback(() => {
+        if(isPaused) {
+            return;
+        }
+
+        pause();
+    }, [isPaused, pause]);
+
+    useEffect(() => {
+        window.exitWorkout = handleCloseClick;
+        window.onPause = handlePause;
+        window.onResume = handleResume;
+    }, [isAndroid, handleCloseClick, handlePause, handleResume])
 
     const closeClassName = classNames.bind(styles)({
         controlsInnerContainer: true,
