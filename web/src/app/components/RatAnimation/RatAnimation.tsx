@@ -41,7 +41,7 @@ export function RatAnimation({}: PropsWithoutRef<RatAnimationProps>) {
   })();
 
   useEffect(() => {
-    const video:HTMLVideoElement = document.querySelector("video[autoplay]");
+    const video:HTMLVideoElement|null = document.querySelector("video[autoplay]");
 
     if(!video) {
       return;

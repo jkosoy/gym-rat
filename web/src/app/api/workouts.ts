@@ -68,7 +68,7 @@ export async function getWorkout(routine: Routine): Promise<Workout> {
 
         // @ts-ignore: if no reps are passed maybe it's an AMRAP
         const reps = rawMove.properties["Amount"].number || -1;
-        
+        console.log(rawMove.properties["Amount"].number);
         let equipment = "";
         
         // @ts-ignore: if a set has moves in it this equipment rollup will exist

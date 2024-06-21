@@ -71,7 +71,7 @@ export function Move({label, reps=undefined, equipment=undefined, focused=false}
         }
     }, [equipment])
 
-    const repsEl = reps && (
+    const repsEl = (reps && reps > 0)  && (
         <span className={styles.reps}>{reps} reps</span>
     )
 
