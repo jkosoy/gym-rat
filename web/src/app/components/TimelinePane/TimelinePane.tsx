@@ -22,6 +22,10 @@ export function TimelinePane() {
     const [isTimelineIn, setIsTimelineIn] = useState(false);
 
     const totalElapsedTime = useMemo(() => {
+        if(!workout) {
+            return 0;
+        }
+
         if(status === "warmup") {
             return elapsedTime;
         }
@@ -75,6 +79,10 @@ export function TimelinePane() {
     }, [circuitIndex, setIndex, elapsedTime, status, workout, totalWorkoutTime])
 
     const timelineElements = useMemo(() => {
+        if(!workout) {
+            return;
+        }
+
         return workout.circuits.flatMap((circuit, i) => {
             if(i === 0 || i === workout.circuits.length-1) {        
                 const className = classNames.bind(styles)({
@@ -134,6 +142,10 @@ export function TimelinePane() {
 
 
     const totalItems = useMemo(() => {
+        if(!workout) {
+            return 0;
+        }
+
         let counter = 0;
         workout.circuits.forEach((circuit, idx) => {
             if(idx === 0 || idx === workout.circuits.length-1) {
@@ -157,6 +169,10 @@ export function TimelinePane() {
     }, [workout])
 
     const currentItem = useMemo(() => {
+        if(!workout) {
+            return 0;
+        }
+
         if(status === 'warmup') {
             return 0;
         }
