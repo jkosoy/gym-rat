@@ -33,7 +33,7 @@ export function RatAnimation({}: PropsWithoutRef<RatAnimationProps>) {
       });
 
       return (
-        <video key={`video_${name}`}  className={className} onEnded={handleVideoEnded} width="1920" height="1920" preload="auto" loop={name === "laugh-loop"} autoPlay={name === state}>
+        <video key={`video_${name}`}  className={className} onEnded={handleVideoEnded} width="1920" height="1920" preload="auto" loop={name === "laugh-loop"} autoPlay={name === state} muted>
           <source src={`/${name}.mp4`} type="video/mp4" />
         </video>
       );
