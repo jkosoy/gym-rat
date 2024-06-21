@@ -7,7 +7,7 @@ import { ButtonWithIcon } from '../ButtonWithIcon';
 import classNames from 'classnames/bind';
 import { useDevice } from '@/app/hooks/useDevice';
 import { useAndroid } from '@/app/hooks/useAndroid';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useKeyboard } from '@/app/hooks/useKeyboard';
 
 declare global {
@@ -17,6 +17,9 @@ declare global {
         onResume: () => void
     }
 }
+
+type AudioState = "click";
+type AudioMappings = Record<AudioState, string|undefined>
 
 export function ActiveMovePane() {
     const { 
@@ -36,6 +39,7 @@ export function ActiveMovePane() {
 
     const { isTV } = useDevice()
     const { isAndroid } = useAndroid();
+    const [audioState, setAudioState] = useState<AudioState>();
 
     let totalTime = 0;
 
@@ -91,8 +95,27 @@ export function ActiveMovePane() {
         centered: true
     })
 
+    const playAudio = useEffect(() => {
+        if(!audioState) {
+            return;
+        }
+
+        const AUDIO_PATHS:AudioMappings = {
+            "click": "/button.mp3",
+        }
+
+        const a = new Audio(AUDIO_PATHS[audioState]);
+        a.preload = 'auto';
+        a.pause();
+        a.load();
+        a.play();
+
+        setAudioState(undefined);
+    }, [audioState, setAudioState]);    
+
     const handleOnClick = () => {
         togglePlayPause();
+        setAudioState("click");
     }
 
     const handlePrevClick = () => {
@@ -103,30 +126,34 @@ export function ActiveMovePane() {
         nextSet();
     }
 
-    // gross
-    useKeyboard("Enter", { onKeyDown: handleOnClick })
-    useKeyboard("ArrowLeft", { onKeyDown: handlePrevClick })
-    useKeyboard("ArrowRight", { onKeyDown: handleNextClick })
-
     const handleCloseClick = useCallback(() => {
-        closeWorkout();
-    }, [closeWorkout])
+        setAudioState("click");
+        setTimeout(() => {
+            closeWorkout();
+        },100);
+    }, [closeWorkout,setAudioState])
 
     const handleResume = useCallback(() => {
         if(!isPaused) {
             return;
         }
-
+        setAudioState("click");
         play();
-    }, [isPaused, play])
+    }, [isPaused, play,setAudioState])
 
     const handlePause = useCallback(() => {
         if(isPaused) {
             return;
         }
-
+        setAudioState("click");
         pause();
-    }, [isPaused, pause]);
+    }, [isPaused, pause,setAudioState]);
+
+    // gross
+    useKeyboard("Enter", { onKeyDown: handleOnClick })
+    useKeyboard("ArrowLeft", { onKeyDown: handlePrevClick })
+    useKeyboard("ArrowRight", { onKeyDown: handleNextClick })
+    useKeyboard("Escape", { onKeyDown: handleCloseClick })
 
     useEffect(() => {
         window.exitWorkout = handleCloseClick;

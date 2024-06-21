@@ -8,6 +8,9 @@ import { ButtonWithIcon } from "../ButtonWithIcon";
 import { useKeyboard } from "@/app/hooks/useKeyboard";
 import { useWorkout } from "@/app/hooks/useWorkout";
 
+type AudioState = "prev" | "next" | "select";
+type AudioMappings = Record<AudioState, string|undefined>
+
 type WorkoutPickerProps = {
     callback: Function
 }
@@ -16,7 +19,8 @@ export function WorkoutPicker({callback}: PropsWithoutRef<WorkoutPickerProps>) {
     const [isLoading, setIsLoading] = useState(true);
     const [routines, setRoutines] = useState<Routine[]>([]);
     const [selectedRoutine, setSelectedRoutine] = useState<Routine|undefined>();
-    const { setWorkout } = useWorkout()
+    const [audioState, setAudioState] = useState<AudioState>();
+    const { workout } = useWorkout();
 
     const nextRoutine = useCallback(() => {
         if(routines.length === 0 || !selectedRoutine) {
@@ -28,7 +32,8 @@ export function WorkoutPicker({callback}: PropsWithoutRef<WorkoutPickerProps>) {
             index = 0;
         }
         setSelectedRoutine(routines[index]);
-    }, [routines, selectedRoutine, setSelectedRoutine])
+        setAudioState("next")
+    }, [routines, selectedRoutine, setSelectedRoutine,setAudioState])
 
     const prevRoutine = useCallback(() => {
         if(routines.length === 0 || !selectedRoutine) {
@@ -40,17 +45,19 @@ export function WorkoutPicker({callback}: PropsWithoutRef<WorkoutPickerProps>) {
             index = routines.length-1;
         }
         setSelectedRoutine(routines[index]);
-    }, [routines, selectedRoutine, setSelectedRoutine])
+        setAudioState("prev")
+    }, [routines, selectedRoutine, setSelectedRoutine,setAudioState])
 
     const selectRoutine = useCallback(async () => {
         if(!selectedRoutine || isLoading) {
             return;
         }
 
+        setAudioState("select");
         setIsLoading(true);
         const workout = await getWorkout(selectedRoutine);
         callback(workout);
-    }, [isLoading, setIsLoading, selectedRoutine, callback]);
+    }, [isLoading, setIsLoading, selectedRoutine, callback,setAudioState]);
 
     useKeyboard("ArrowUp", { onKeyDown: prevRoutine })
     useKeyboard("ArrowDown", { onKeyDown: nextRoutine })
@@ -67,6 +74,26 @@ export function WorkoutPicker({callback}: PropsWithoutRef<WorkoutPickerProps>) {
         loadRoutines();
     }, [loadRoutines])
 
+    const playAudio = useEffect(() => {
+        if(!audioState) {
+            return;
+        }
+
+        const AUDIO_PATHS:AudioMappings = {
+            "prev": "/button.mp3",
+            "next": "/button.mp3",
+            "select": "/select.mp3",
+        }
+
+        const a = new Audio(AUDIO_PATHS[audioState]);
+        a.preload = 'auto';
+        a.pause();
+        a.load();
+        a.play();
+
+        setAudioState(undefined);
+    }, [audioState, setAudioState]);
+    
     const routineEls = useMemo(() => {
         if(routines.length === 0) {
             return;
@@ -80,7 +107,7 @@ export function WorkoutPicker({callback}: PropsWithoutRef<WorkoutPickerProps>) {
     }, [routines, selectRoutine]);
 
     const computedComponent = (() => {
-        if(isLoading || routines.length === 0) {
+        if(isLoading || routines.length === 0 || workout !== undefined) {
             return <SkeletonPicker />
         }
 

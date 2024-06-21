@@ -20,14 +20,6 @@ export function MenuScreen() {
     return 'in';
   }, [selectedWorkout])
 
-  useEffect(() => {
-    // // const to = setTimeout(() => {
-    // //   setWorkout(selectedWorkout);      
-    // // }, 1000);
-
-    // return () => clearTimeout(to);
-  }, [selectedWorkout, setWorkout])
-
   const className = classNames.bind(styles)({
     container: true,
     in: animationState === 'in',

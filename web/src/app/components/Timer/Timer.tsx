@@ -18,7 +18,16 @@ export function Timer({style, currentTime, totalTime}:PropsWithoutRef<TimerProps
         }
         
         if(style === "current") {
+            if(currentTime < 0) {
+                return formatTime(0);
+            }
+
             return formatTime(currentTime);
+        }
+
+        // TODO: figure out why sometimes this calculation is wrong, especially right before cooldowns
+        if(totalTime - currentTime < 0) {
+            return formatTime(0);
         }
 
         return formatTime(totalTime - currentTime);
