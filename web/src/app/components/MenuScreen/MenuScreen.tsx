@@ -20,8 +20,6 @@ export function MenuScreen() {
     return 'in';
   }, [selectedWorkout])
 
-  console.log(animationState);
-
   useEffect(() => {
     // // const to = setTimeout(() => {
     // //   setWorkout(selectedWorkout);      
@@ -35,8 +33,6 @@ export function MenuScreen() {
     in: animationState === 'in',
     out: animationState === 'out'
   })
-
-  console.log(className);
 
   const handleAnimationEnd = useCallback(() => {
     if(!selectedWorkout) {
