@@ -95,7 +95,7 @@ export function ActiveMovePane() {
         centered: true
     })
 
-    const playAudio = useEffect(() => {
+    useEffect(() => {
         if(!audioState) {
             return;
         }

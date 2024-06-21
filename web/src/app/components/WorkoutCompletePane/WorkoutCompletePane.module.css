@@ -1,0 +1,72 @@
+.container {
+    position: relative;
+}
+
+.ratContainer {
+    height: 100%;
+    opacity: 0;;
+    animation: in 300ms cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
+    transform: translate3d(0,0,0);
+}
+
+.text {
+    position: absolute;
+    bottom: 100px;
+    font-size: calc(3rem * var(--scale));
+    width: 100%;
+    z-index: var(--layer-top);
+    display: flex;
+    flex-direction: column;
+    place-items: center;
+    place-content: center;
+}
+
+.text h1 {
+    opacity: 0;
+    margin-bottom: calc(10px * var(--scale));
+    animation: in 300ms cubic-bezier(0.215, 0.610, 0.355, 1.000) 1500ms forwards;
+}
+
+.text button {
+    opacity: 0;
+    min-width: calc(100px * var(--scale));
+    text-align: center;
+    font-size: calc(1.5rem * var(--scale));
+    font-family: var(--font-family);
+    font-weight: var(--font-weight-normal);
+    background: rgba(0,0,0,0.125);
+    border-radius: calc(8px * var(--scale));
+    display: inline-block;
+    padding: calc(10px * var(--scale));
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    transition: background 200ms cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    animation: in 300ms cubic-bezier(0.215, 0.610, 0.355, 1.000) 1800ms forwards;
+}
+
+.text button:hover {
+    background:rgba(0,0,0,0.25);
+}    
+
+@keyframes in {
+    from {
+        opacity: 0;
+        transform: scale(1.08);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes out {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(1.08);
+    }
+}

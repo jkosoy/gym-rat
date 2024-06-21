@@ -4,13 +4,13 @@ import { useWorkout } from '@/app/hooks/useWorkout';
 import { ActiveMovePane } from '../ActiveMovePane';
 import { TimelinePane } from '../TimelinePane';
 import styles from './WorkoutScreen.module.css';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { Status } from '@/app/contexts/WorkoutContext';
+import { WorkoutCompletePane } from '../WorkoutCompletePane';
 
 type AudioMappings = Record<Status, string|undefined>
 
 export function WorkoutScreen() {
-    const el = useRef(null);
     const { status } = useWorkout()
 
     useEffect(() => {
@@ -19,8 +19,8 @@ export function WorkoutScreen() {
             "active": "/active.mp3",
             "recovery": "/recovery.mp3",
             "cooldown": "/cooldown.mp3",
-            "warmup": undefined,
-            "complete": undefined,
+            "warmup": "/warmup.mp3",
+            "complete": "/complete.mp3",
         }
     
         if(AUDIO_PATHS[status] === undefined) {
@@ -34,13 +34,16 @@ export function WorkoutScreen() {
         a.pause();
         a.load();
         a.play();
-    }, [status])
+    }, [status]);
     
+    const computedElement = useMemo(() => {
+        return status === "complete" ? <WorkoutCompletePane /> : <ActiveMovePane />
+    }, [status])
 
     return(
         <>
-            <div ref={el} className={styles.container}>
-                <ActiveMovePane />
+            <div className={styles.container}>
+                {computedElement}
                 <TimelinePane />
             </div>
         </>
