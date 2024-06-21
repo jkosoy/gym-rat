@@ -26,6 +26,10 @@ export function ActiveMovePane() {
     let totalTime = 0;
 
     const setEl = (() => {
+        if(!workout) {
+            return;
+        }
+
         if(["warmup", "cooldown", "complete"].includes(status)) {
             const circuit:Circuit = getCurrentCircuit()
             totalTime = circuit.sets[0].recoverySeconds;
