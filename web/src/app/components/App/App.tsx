@@ -25,7 +25,8 @@ export function App({isTV=false}: PropsWithoutRef<AppProps>) {
     }, [workout])
 
     useEffect(() => {
-        setInWorkout(workout !== undefined);
+        console.log(`App. Workout is ${workout}`);
+        setInWorkout(workout === undefined ? false : true);
     }, [workout, setInWorkout]);
 
     useEffect(() => {

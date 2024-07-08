@@ -43,6 +43,7 @@ class MainActivity : ComponentActivity() {
         webView.settings.builtInZoomControls = false
         webView.settings.displayZoomControls = false
         webView.settings.domStorageEnabled = true
+        webView.settings.mediaPlaybackRequiresUserGesture = false
         webView.webViewClient = WebViewClient()
         webView.addJavascriptInterface(GymRatWebAppInterface(), "Android")
         webView.clearCache(true)
