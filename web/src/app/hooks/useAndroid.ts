@@ -13,15 +13,17 @@ export function useAndroid() {
     const [isAndroid, _setIsAndroid] = useState(false);
     const [inWorkout, _setInWorkout] = useState(false);
 
+    // initialize
     useEffect(() => {
-        setIsAndroid(window.Android !== undefined);
-    }, [setIsAndroid])
+        sharedIsAndroid = window.Android !== undefined;
+        _setIsAndroid(sharedIsAndroid);
+    }, [])
 
     // create a shared state, https://stackoverflow.com/questions/66447553/react-preserve-state-in-custom-hook
     useEffect(() => {
         _setIsAndroid(sharedIsAndroid);
         _setInWorkout(sharedInWorkout);
-    }, [sharedIsAndroid, sharedInWorkout, _setInWorkout, _setIsAndroid]);
+    }, [_setInWorkout, _setIsAndroid]);
     
     function setIsAndroid(value: boolean) {
         sharedIsAndroid = value;
