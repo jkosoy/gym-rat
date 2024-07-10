@@ -3,7 +3,6 @@
 import { MenuScreen } from "@/app/components/MenuScreen";
 import { WorkoutScreen } from "@/app/components/WorkoutScreen";
 import { DeviceProvider } from "@/app/contexts/DeviceContext";
-import { WorkoutProvider } from "@/app/contexts/WorkoutContext";
 import { useAndroid } from "@/app/hooks/useAndroid";
 import { useWorkout } from "@/app/hooks/useWorkout";
 import { PropsWithoutRef, useCallback, useEffect, useMemo, useState } from "react";
@@ -13,8 +12,10 @@ type AppProps = {
 }
 
 export function App({isTV=false}: PropsWithoutRef<AppProps>) {
-    const { workout, status } = useWorkout();
+    const { workout, set } = useWorkout();
     const { setInWorkout } = useAndroid();
+
+    const type = set ? set.type : 'default';
 
     const screen = useMemo(() => {
         if(!workout) {
@@ -25,14 +26,13 @@ export function App({isTV=false}: PropsWithoutRef<AppProps>) {
     }, [workout])
 
     useEffect(() => {
-//        console.log(`App. Workout is ${workout}`);
         setInWorkout(workout === undefined ? false : true);
     }, [workout, setInWorkout]);
 
     useEffect(() => {
         const rootEl = document.documentElement;
-        rootEl.style.setProperty('--color-background', `var(--color-background-${status})`);
-    }, [status]);
+        rootEl.style.setProperty('--color-background', `var(--color-background-${type})`);
+    }, [type]);
 
     return (
         <DeviceProvider isTV={isTV}>

@@ -57,7 +57,7 @@ export function WorkoutPicker({callback}: PropsWithoutRef<WorkoutPickerProps>) {
         setIsLoading(true);
         const workout = await getWorkout(selectedRoutine);
         callback(workout);
-    }, [isLoading, setIsLoading, selectedRoutine, callback,setAudioState]);
+    }, [isLoading, setIsLoading, selectedRoutine, callback, setAudioState]);
 
     useKeyboard("ArrowUp", { onKeyDown: prevRoutine })
     useKeyboard("ArrowDown", { onKeyDown: nextRoutine })

@@ -10,7 +10,6 @@ const notion = new Client({
   auth: process.env.NOTION_TOKEN,
 })
 
-
 // given a notion page id, return a move name.
 const moveCache = new Map<string, string>();
 async function getReferenceMoveById(moveId: string):Promise<string> {
@@ -55,22 +54,35 @@ async function getDatabaseInPage(pageId: string): Promise<QueryDatabaseResponse|
 
 // workouts are a complex graph of embedded database blocks. let's walk the tree to retrieve them.
 export async function getWorkout(routine: Routine): Promise<Workout> {
+  const { name: routineName, recoverySeconds: routineRecoverySeconds } = routine;
+
   const rawCircuitsDB = await getDatabaseInPage(routine.id);
 
   const circuits:Circuit[] = await Promise.all(rawCircuitsDB!.results.map(async rawCircuit => {
-    let moves:Move[] = [];
+    let moves:Array<Move[]> = [];
     const rawMovesDB = await getDatabaseInPage(rawCircuit.id);
     if(rawMovesDB) {
-      moves = await Promise.all(rawMovesDB.results.map(async rawMove => {
+      const flatMoves = await Promise.all(rawMovesDB.results.map(async rawMove => {
           // @ts-ignore: if a set has moves in it this relationship will exist
         const referenceMoveId = rawMove.properties["Move"].relation[0].id;
         const name = await getReferenceMoveById(referenceMoveId);      
 
         // @ts-ignore: if no reps are passed maybe it's an AMRAP
         const reps = rawMove.properties["Amount"].number || -1;
-        
+
+        // @ts-ignore: if no order is passed maybe it's an AMRAP
+        let group = rawMove.properties["Order"].number || -1; 
+
+        // allow for a group override if it exists. 
+        // this allows us to sort items but keep them as a single set, such as for obstacle courses.
+        try {
+          // @ts-ignore: described above
+          group = rawMove.properties["Group"].number || -1;
+        }
+        catch(e) {}
+
         let equipment = "";
-        
+
         // @ts-ignore: if a set has moves in it this equipment rollup will exist
         if(rawMove.properties["Equipment"].rollup.array[0].select) {
           // @ts-ignore: if a set has moves in it this equipment rollup will exist
@@ -80,13 +92,56 @@ export async function getWorkout(routine: Routine): Promise<Workout> {
         return {
           name,
           equipment,
-          reps
+          reps,
+          group
         }
       }));
+
+      // chunk moves by group
+      moves = Object.values(
+        flatMoves.reduce((groups: Record<number, Move[]>, move:Move) => {
+          if(!groups[move.group]) {
+           groups[move.group] = [] 
+          }
+
+          groups[move.group].push(move)
+          return groups;
+        }, {})
+      )
     }
 
     // @ts-ignore: circuit is loaded
     const name = rawCircuit.properties["Name"].title[0].plain_text;
+
+    const type = (() => {
+      if(name === "Warmup") {
+        return "warmup";
+      }
+
+      if(name === "Cooldown") {
+        return "cooldown";
+      }
+
+      try {
+        // @ts-ignore: circuit is loaded and if a set has a type defined this will exist
+        const t = rawCircuit.properties["Type"].select.name
+
+        if(t === "Stations") {
+          return "stations";
+        }
+
+        if(t === "Manual Reps") {
+          return "manual";
+        }
+
+        return "amrap";
+      }
+      catch(e) {
+        // AMRAP is default to make it easy to set up single sets like jump ropes
+        return "amrap";
+      }
+    })();
+
     // @ts-ignore: circuit is loaded
     const totalSets = rawCircuit.properties["Sets"].number || 1;
     // @ts-ignore: circuit is loaded
@@ -94,47 +149,65 @@ export async function getWorkout(routine: Routine): Promise<Workout> {
     // @ts-ignore: circuit is loaded
     const recoverySeconds = rawCircuit.properties["Low"].number || 0;
 
-    const sets:ExcerciseSet[] = Array(totalSets).fill({
-      activeSeconds,
-      recoverySeconds,
-      moves
-    });
+    const sets:ExcerciseSet[] = [];
+    let currentGroup = 0;
+
+    if(type === "warmup" || type === "cooldown") {
+      sets.push({
+        type: type,
+        time: recoverySeconds,
+        autoAdvance: true,
+        moves: []
+      })
+    }
+    else {
+      for(let i=0;i<totalSets;i++) {
+        sets.push({
+          type: "active",
+          time: activeSeconds,
+          autoAdvance: type !== "manual",
+          moves: moves[currentGroup]
+        })
+  
+        if(recoverySeconds > 0) {
+          sets.push({
+            type: "recovery",
+            time: recoverySeconds,
+            autoAdvance: true,
+            moves: []
+          })
+        }  
+  
+        currentGroup++;
+        if(currentGroup >= moves.length) {
+          currentGroup = 0;
+        }  
+      }
+  
+      sets.push({
+        type: "circuit-recovery",
+        time: routineRecoverySeconds,
+        autoAdvance: true,
+        moves: []
+      })
+    }
 
     return {
       name,
+      type,
       sets
     }
   }));
 
-  const { id, name, recoverySeconds } = routine;
+  // console.dir({
+  //   name: routineName,
+  //   circuits
+  // }, { depth: null })
 
   return {
-    name,
+    name: routineName,
     circuits,
-    recoverySeconds
   }
-}
-
-export async function getTestRoutines(): Promise<Routine[]> {
-  await sleep(1000);
-
-  return [
-    {
-      id: 'abc123',
-      name: 'Local Workout routine 1',
-      recoverySeconds: 500
-    },
-    {
-      id: 'abc1234',
-      name: 'Local Workout routine 2',
-      recoverySeconds: 500
-    },
-    {
-      id: 'abc12345',
-      name: 'Local Workout routine 3 kjlasdhjkasjhkdakjshd jkhsdafkjashdfkjasdhf jkahsdfkjahsdfkj',
-      recoverySeconds: 500
-    }
-  ]
 }
 
 export async function getRoutines(): Promise<Routine[]> {  

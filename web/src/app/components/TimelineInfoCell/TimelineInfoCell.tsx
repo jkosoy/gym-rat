@@ -4,11 +4,12 @@ import classNames from "classnames/bind"
 import { formatTime } from '@/app/helpers/time'
 
 type TimelineInfoCellProps = {
-    duration: number
+    duration: number,
+    displayDuration?: boolean
 }
 
-export function TimelineInfoCell({duration, children}: PropsWithChildren<TimelineInfoCellProps>) {
-    const computedDuration = formatTime(duration);
+export function TimelineInfoCell({duration, displayDuration=true, children}: PropsWithChildren<TimelineInfoCellProps>) {
+    const computedDuration = displayDuration ? formatTime(duration) : '';
 
     return (
         <div className={styles.container}>

@@ -11,7 +11,13 @@ import { WorkoutCompletePane } from '../WorkoutCompletePane';
 type AudioMappings = Record<Status, string|undefined>
 
 export function WorkoutScreen() {
-    const { status } = useWorkout()
+    const { 
+        set,
+        sets,
+        setIndex,
+    } = useWorkout()
+
+    const isWorkoutComplete = sets && setIndex === sets.length;
 
     useEffect(() => {
         const AUDIO_PATHS:AudioMappings = {
@@ -20,25 +26,32 @@ export function WorkoutScreen() {
             "recovery": "/recovery.mp3",
             "cooldown": "/cooldown.mp3",
             "warmup": "/warmup.mp3",
-            "complete": "/complete.mp3",
+            "complete": "/complete.mp3", // TODO.
         }
-    
-        if(AUDIO_PATHS[status] === undefined) {
+
+        const type = isWorkoutComplete ? "complete" : set?.type
+
+        if(!type || AUDIO_PATHS[type] === undefined) {
             return
         }
 
-        const url = AUDIO_PATHS[status];
+        const url = AUDIO_PATHS[type];
 
         const a = new Audio(url);
         a.preload = 'auto';
         a.pause();
         a.load();
         a.play();
-    }, [status]);
-    
+    }, [set, isWorkoutComplete]);
+
+
     const computedElement = useMemo(() => {
-        return status === "complete" ? <WorkoutCompletePane /> : <ActiveMovePane />
-    }, [status])
+        if(!sets) {
+            return;
+        }
+
+        return isWorkoutComplete ? <WorkoutCompletePane /> : <ActiveMovePane />
+    }, [isWorkoutComplete, sets])
 
     return(
         <>

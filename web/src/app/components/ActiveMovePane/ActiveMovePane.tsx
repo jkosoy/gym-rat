@@ -7,7 +7,7 @@ import { ButtonWithIcon } from '../ButtonWithIcon';
 import classNames from 'classnames/bind';
 import { useDevice } from '@/app/hooks/useDevice';
 import { useAndroid } from '@/app/hooks/useAndroid';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useKeyboard } from '@/app/hooks/useKeyboard';
 
 declare global {
@@ -24,71 +24,61 @@ type AudioMappings = Record<AudioState, string|undefined>
 export function ActiveMovePane() {
     const { 
         workout, 
-        getCurrentCircuit, 
-        getCurrentSet, 
-        status, 
-        isPaused, 
-        elapsedTime, 
+        set,
+        elapsedTime,
         togglePlayPause,
-        nextSet,
         prevSet,
+        nextSet,
         closeWorkout,
         play,
-        pause
+        pause,
+        isPaused,
     } = useWorkout();
-
     const { isTV } = useDevice()
     const { isAndroid } = useAndroid();
     const [audioState, setAudioState] = useState<AudioState>();
 
-    let totalTime = 0;
-
-    const setEl = (() => {
-        if(!workout) {
-            return;
+    const { time, el } = useMemo(() => {
+        if(!workout || !set) {
+            return { time: 0, el: null }
         }
 
-        if(["warmup", "cooldown", "complete"].includes(status)) {
-            const circuit:Circuit = getCurrentCircuit()
-            totalTime = circuit.sets[0].recoverySeconds;
+        const { type, time } = set;
+
+        const el = (() => {
+            if(type === "warmup") {
+                return <h2>Warmup</h2>
+            }
+
+            if(type === "cooldown") {
+                return <h2>Cooldown</h2>
+            }
+
+            if(type === "circuit-recovery") {
+                return <h2>Water Break</h2>
+            }
+
+            if(type === "recovery") {
+                return <h2>Recovery</h2>
+            }
+
+            // active
+            const movesEl = set.moves.flatMap((move, i) => {
+                const { reps, name, equipment } = move;
+                return (
+                    <Move key={`m${i}`} reps={reps} label={name} equipment={equipment} focused />
+                )
+            })
 
             return (
-                <h2>{circuit.name}</h2>
-            )
-        }
+                <>
+                    <div className={styles.moves}>{movesEl}</div>
+                </>            
+            )        
+        })();
 
-        if(status === "circuit-recovery") {
-            totalTime = workout.recoverySeconds
-
-            return (
-                <h2>Water Break</h2>
-            )
-        }
-
-        const set:ExcerciseSet = getCurrentSet()
-        if(status === "recovery") {
-            totalTime = set.recoverySeconds;
-
-            return (
-                <h2>Recovery</h2>
-            )            
-        }
-
-        totalTime = set.activeSeconds;
-
-        const moves = set.moves.flatMap((move, i) => {
-            const { reps, name, equipment } = move;
-            return (
-                <Move key={`m${i}`} reps={reps} label={name} equipment={equipment} focused />
-            )
-        })
-        
-        return (
-            <>
-                <div className={styles.moves}>{moves}</div>
-            </>
-        )
-    })();
+        return { time, el }        
+    }, [workout, set])
 
     const controlsClassName = classNames.bind(styles)({
         controlsContainer: true,
@@ -147,7 +137,7 @@ export function ActiveMovePane() {
         }
         setAudioState("click");
         pause();
-    }, [isPaused, pause,setAudioState]);
+    }, [isPaused, pause, setAudioState]);
 
     // gross
     useKeyboard("Enter", { onKeyDown: handleOnClick })
@@ -174,14 +164,14 @@ export function ActiveMovePane() {
                 </div>
             </div>
             <div className={styles.mainTimerContainer}>
-                <Timer style="remaining" currentTime={elapsedTime} totalTime={totalTime} />
+                <Timer style={set?.autoAdvance ? "remaining" : "dashes"} currentTime={elapsedTime} totalTime={time} />
             </div>
             <div className={styles.infoContainer}>
                 <div className={styles.moveContainer}>
-                    {setEl}
+                    {el}
                 </div>
                 <div className={styles.progressBar}>
-                    <Timer style="bar" currentTime={elapsedTime} totalTime={totalTime} />
+                    <Timer style="bar" currentTime={elapsedTime} totalTime={time} />
                 </div>
             </div>
             <div className={controlsClassName}>

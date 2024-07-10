@@ -1,5 +1,6 @@
 export type Move = {
     name: string,
     equipment: string,
-    reps?: number
+    group: number,
+    reps?: number,
 }

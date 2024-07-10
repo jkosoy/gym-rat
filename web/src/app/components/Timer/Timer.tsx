@@ -4,7 +4,7 @@ import styles from './Timer.module.css';
 import classNames from "classnames/bind";
 
 export interface TimerProps {
-    style: "current" | "remaining" | "bar",
+    style: "current" | "remaining" | "bar" | "dashes",
     currentTime: number,
     totalTime: number
 }
@@ -23,6 +23,10 @@ export function Timer({style, currentTime, totalTime}:PropsWithoutRef<TimerProps
             }
 
             return formatTime(currentTime);
+        }
+
+        if(style === "dashes") {
+            return "∞";
         }
 
         // TODO: figure out why sometimes this calculation is wrong, especially right before cooldowns
