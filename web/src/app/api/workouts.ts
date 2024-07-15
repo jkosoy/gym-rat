@@ -1,7 +1,7 @@
 'use server'
 
 import { Client } from "@notionhq/client";
-import { QueryDatabaseResponse } from "@notionhq/client/build/src/api-endpoints";
+import { BlockObjectResponse, QueryDatabaseResponse } from "@notionhq/client/build/src/api-endpoints";
 
 import { sleep } from "@/app/helpers/utility";
 import { Routine, Workout, Circuit, ExcerciseSet, Move } from "@/app/types/Workout";
@@ -30,14 +30,18 @@ async function getReferenceMoveById(moveId: string):Promise<string> {
 
 // given a page with an inline database view, retrieve the id of said database view.
 async function getIdForDatabaseBlock(blockId: string): Promise<string|undefined> {
-  const block = await notion.blocks.children.list({
+  const blocks = await notion.blocks.children.list({
     block_id: blockId,
-    page_size: 1
+    page_size: 100
   });
 
-  if(block.results.length > 0) {
-    return block.results[0].id;
+  const db = blocks.results.filter(result => (result as BlockObjectResponse).type === 'child_database');
+  if(db.length === 0) {
+    console.warn(`No database found in ${blockId}.`);
+    return;
   }
+
+  return db[0].id;
 }
 
 async function getDatabaseInPage(pageId: string): Promise<QueryDatabaseResponse|undefined>  {
@@ -55,11 +59,17 @@ async function getDatabaseInPage(pageId: string): Promise<QueryDatabaseResponse|
 // workouts are a complex graph of embedded database blocks. let's walk the tree to retrieve them.
 export async function getWorkout(routine: Routine): Promise<Workout> {
   const { name: routineName, recoverySeconds: routineRecoverySeconds } = routine;
-
+  console.log(`Loading routine :: ${routineName} (${routine.id}).`)
   const rawCircuitsDB = await getDatabaseInPage(routine.id);
 
   const circuits:Circuit[] = await Promise.all(rawCircuitsDB!.results.map(async rawCircuit => {
+
+    // @ts-ignore: circuit is loaded
+    const name = rawCircuit.properties["Name"].title[0].plain_text;
+
     let moves:Array<Move[]> = [];
+    console.log(`Loading circuit :: ${name} (${rawCircuit.id}).`);
+
     const rawMovesDB = await getDatabaseInPage(rawCircuit.id);
     if(rawMovesDB) {
       const flatMoves = await Promise.all(rawMovesDB.results.map(async rawMove => {
@@ -109,9 +119,6 @@ export async function getWorkout(routine: Routine): Promise<Workout> {
         }, {})
       )
     }
-
-    // @ts-ignore: circuit is loaded
-    const name = rawCircuit.properties["Name"].title[0].plain_text;
 
     const type = (() => {
       if(name === "Warmup") {
