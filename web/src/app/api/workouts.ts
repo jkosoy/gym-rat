@@ -156,6 +156,13 @@ export async function getWorkout(routine: Routine): Promise<Workout> {
     // @ts-ignore: circuit is loaded
     const recoverySeconds = rawCircuit.properties["Low"].number || 0;
 
+    let hasCircuitRecovery = true;
+    try {
+      // @ts-ignore: circuit is loaded
+      hasCircuitRecovery = (rawCircuit.properties["Skip Circuit Recovery?"].checkbox === true) ? false : true;
+    }
+    catch(e) {}
+
     const sets:ExcerciseSet[] = [];
     let currentGroup = 0;
 
@@ -190,13 +197,15 @@ export async function getWorkout(routine: Routine): Promise<Workout> {
           currentGroup = 0;
         }  
       }
-  
-      sets.push({
-        type: "circuit-recovery",
-        time: routineRecoverySeconds,
-        autoAdvance: true,
-        moves: []
-      })
+
+      if(hasCircuitRecovery) {
+        sets.push({
+          type: "circuit-recovery",
+          time: routineRecoverySeconds,
+          autoAdvance: true,
+          moves: []
+        })  
+      }  
     }
 
     return {
