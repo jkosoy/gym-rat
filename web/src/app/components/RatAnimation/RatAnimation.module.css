@@ -6,6 +6,12 @@
     --video-size: 500px;
 }
 
+@media screen and (max-width: 600px) {
+    :global(.is-webapp) .container {
+        --video-size: 300px;
+    }
+}
+
 .videoContainer {
     position: relative;
     width: calc(var(--video-size) * var(--scale));

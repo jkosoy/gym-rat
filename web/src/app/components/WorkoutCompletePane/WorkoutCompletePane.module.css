@@ -21,6 +21,13 @@
     place-content: center;
 }
 
+@media screen and (max-width: 600px) {
+    :global(.is-webapp) .text h1 {
+        font-size: calc(2rem * var(--scale));
+    }
+
+}
+
 .text h1 {
     opacity: 0;
     margin-bottom: calc(10px * var(--scale));
