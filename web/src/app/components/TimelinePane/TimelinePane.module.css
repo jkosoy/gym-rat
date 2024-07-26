@@ -5,6 +5,12 @@
     animation: in 500ms cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
 }
 
+@media screen and (max-width: 1024px) {
+    :global(.is-webapp) .container {
+        display: none;
+    }
+}
+
 /* border */
 .container::before {
     content: '';

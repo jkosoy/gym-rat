@@ -8,6 +8,12 @@
     gap: calc(20px * var(--scale));
 }
 
+@media screen and (max-width: 480px) {
+    :global(.is-webapp) .pickerContainer {
+        --scale: 0.75;
+    }
+}
+
 .nextButton { 
     order: 3;
     place-self: center;

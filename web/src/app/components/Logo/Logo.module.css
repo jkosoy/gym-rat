@@ -2,3 +2,9 @@
     width: calc(350px * var(--scale));
     height:auto;
 }
+
+@media screen and (max-width: 480px) {
+    :global(.is-webapp) .container {
+        --scale: 0.5;
+    }
+}

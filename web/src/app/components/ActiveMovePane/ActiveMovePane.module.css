@@ -3,9 +3,15 @@
     flex-direction: column;
     gap: calc(5px * var(--scale));
     margin: calc(25px * var(--scale)) calc(10px * var(--scale));
-    height: calc((75% - 50px) * var(--scale));
     animation: in 800ms cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
 }
+
+@media screen and (max-width: 700px) {
+    :global(.is-webapp) .container {
+        height: calc((75% - 50px) * var(--scale));
+    }
+}
+
 
 @keyframes in {
     from {
@@ -27,18 +33,6 @@
         opacity: 0;
         transform: scale(1.08);
     }
-}
-
-
-/* @media screen and (min-width: 480px) {
-    .container {
-        height: unset;
-    }
-} */
-
-/* TODO: remove below for media query above */
-.container {
-    height: unset;
 }
 
 .container > div {
@@ -75,36 +69,48 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: calc(16rem * var(--scale));
+    font-size: calc(20rem * var(--scale));
     font-weight: var(--font-weight-bold);
 }
 
-/* @media screen and (min-width: 480px) {
-    .container .mainTimerContainer {
-        font-size: calc(24rem * var(--scale));
-    }
-} */
 
-/* TODO: remove below for media query above */
-.container .mainTimerContainer {
-    font-size: calc(20rem * var(--scale));
+@media screen and (max-width: 1024px) {
+    :global(.is-webapp) .container .mainTimerContainer {
+        font-size: calc(13rem * var(--scale));
+    }
 }
 
-
 .container .infoContainer {
+    --scale: 0.75;
     flex-grow: 3;
     padding: calc(10px * var(--scale)) calc(12px * var(--scale));
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: calc(48px * var(--scale));
+    gap: calc(24px * var(--scale));
     place-items: center;
-    place-content: center;
+    place-content: center;    
 }
 
+@media screen and (max-width: 600px) {
+    :global(.is-webapp) .container .infoContainer {
+        --scale: 0.5;
+        gap: calc(24px * var(--scale));
+    }
+
+}
+
+@media screen and (min-width: 701px) and (max-width: 1024px) {
+    :global(.is-webapp) .container .infoContainer {
+        gap: calc(48px * var(--scale));
+    }
+}
+
+
 .moveContainer {
-    display: flex;
-    flex: 0;
+    display: grid;
+    text-align: center;
+    width: 50%;
 }
 
 .progressBar {
@@ -112,25 +118,9 @@
     width: 100%;
     left: 0;
     top: 0;
-    /* top: calc(12px * var(--scale)); */
     display: flex;
     place-content: center;
-    /* padding: 0 calc(24px * var(--scale)); */
 }
-
-/* @media screen and (min-width: 480px) {
-    .progressBar {
-        top: 48px;
-        padding: 0 48px;
-    }
-} */
-
-/* TODO: remove below for media query above */
-/* .progressBar {
-    top: calc(48px * var(--scale));
-    padding: 0 calc(48px * var(--scale));
-} */
-
 
 .infoContainer::after
 {
@@ -148,27 +138,18 @@
 
 .moveContainer h2 {
     font-weight: var(--font-weight-normal);
-    font-size: calc(2.8rem * var(--scale));
+    font-size: calc(3.2rem * var(--scale));
     margin: 0 auto;
 }
 
-/* @media screen and (min-width: 480px) {
-    .moveContainer h2 {
-        font-size: calc(3.2rem * var(--scale));
+@media screen and (max-width: 768px) {
+    :global(.is-webapp) .moveContainer h2 {
+        font-size: calc(2.8rem * var(--scale));
     }
-} */
-
-/* TODO: remove below for media query above */
-.moveContainer h2 {
-    font-size: calc(3.2rem * var(--scale));
 }
 
-
 .moveContainer .moves {
-    flex: 0;
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    max-height: calc(400px * var(--scale));
-    column-gap: calc(10px * var(--scale));
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(calc(100%/4), 1fr));
+    gap: calc(10px * var(--scale));
 }

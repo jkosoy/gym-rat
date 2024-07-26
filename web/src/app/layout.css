@@ -6,7 +6,6 @@
   --color-background-warmup: var(--color-background-default);
   --color-background-cooldown: var(--color-background-default);
   --color-background-complete: var(--color-background-default);
-
   --color-background: var(--color-background-default);
 
   --font-family: var(--font-dm-sans);
@@ -21,6 +20,11 @@
   --layer-top: 1000;
   --layer-middle: 100;
   --layer-bottom: 1;
+
+  --screen-xs: 480px;
+  --screen-sm: 768px;
+  --screen-md: 1024px;
+  --screen-lg: 1200px;
 }
 
 * {

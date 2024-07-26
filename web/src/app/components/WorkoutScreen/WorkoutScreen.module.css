@@ -1,16 +1,11 @@
 .container {
-    display: block;
+    display: grid;
     grid-template-columns: 3fr 1fr;
     height: 100%;
 }
 
-/* @media screen and (min-width: 1200px) {
-    .container {
-        display: grid;
+@media screen and (max-width: 1024px) {
+    :global(.is-webapp) .container {
+        grid-template-columns: 1fr;
     }
-} */
-
-/* TODO: remove below for media query above */
-.container {
-    display: grid;
 }

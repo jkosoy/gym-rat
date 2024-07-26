@@ -5,10 +5,23 @@
     place-items: flex-start;
     gap: calc(10px * var(--scale));
     margin: calc(2px * var(--scale)) 0;
+    flex: 0 0 0;
 }
 
 .container.focused {
+    display: grid;
+    grid-template-rows: 1fr 1fr;
     margin: calc(5px * var(--scale)) 0;
+    place-content: center;
+    place-items: center;
+    text-align: center;
+    padding: calc(2px * var(--scale));
+    gap: calc(3px * var(--scale));
+}
+
+.container.focused .equipment {
+    position: relative;
+    top: 2px;
 }
 
 

@@ -5,9 +5,7 @@ import { App } from "@/app/components/App";
 
 export default function Home() {
   return (
-    <main className={styles.main} style={{
-      '--scale': '0.5'
-    } as CSSProperties}>
+    <main className={styles.main}>
       <WorkoutProvider>
         <App isTV />
       </WorkoutProvider>

@@ -4,7 +4,7 @@ import { WorkoutProvider } from "./contexts/WorkoutContext";
 
 export default function Home() {
   return (
-    <main className={styles.main}>
+    <main className={[styles.main,'is-webapp'].join(' ')}>
       <WorkoutProvider>
         <App />
       </WorkoutProvider>        
