@@ -4,13 +4,14 @@
     gap: calc(5px * var(--scale));
     margin: calc(25px * var(--scale)) calc(10px * var(--scale));
     animation: in 800ms cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
+    /* height: calc((75% - 50px) * var(--scale)); */
 }
 
-@media screen and (max-width: 700px) {
+/* @media screen and (max-width: 700px) {
     :global(.is-webapp) .container {
         height: calc((75% - 50px) * var(--scale));
     }
-}
+} */
 
 
 @keyframes in {
@@ -94,7 +95,7 @@
 
 @media screen and (max-width: 600px) {
     :global(.is-webapp) .container .infoContainer {
-        --scale: 0.5;
+        --scale: 0.75;
         gap: calc(24px * var(--scale));
     }
 

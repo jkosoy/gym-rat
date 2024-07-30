@@ -7,6 +7,7 @@ import { CSSProperties, PropsWithoutRef, useCallback, useEffect, useMemo, useSta
 import { ButtonWithIcon } from "../ButtonWithIcon";
 import { useKeyboard } from "@/app/hooks/useKeyboard";
 import { useWorkout } from "@/app/hooks/useWorkout";
+import { useSoundEffect } from "@/app/hooks/useSoundEffects";
 
 type AudioState = "prev" | "next" | "select";
 type AudioMappings = Record<AudioState, string|undefined>
@@ -21,6 +22,7 @@ export function WorkoutPicker({callback}: PropsWithoutRef<WorkoutPickerProps>) {
     const [selectedRoutine, setSelectedRoutine] = useState<Routine|undefined>();
     const [audioState, setAudioState] = useState<AudioState>();
     const { workout } = useWorkout();
+    const [playEffect] = useSoundEffect();
 
     const nextRoutine = useCallback(() => {
         if(routines.length === 0 || !selectedRoutine) {
@@ -85,14 +87,9 @@ export function WorkoutPicker({callback}: PropsWithoutRef<WorkoutPickerProps>) {
             "select": "/select.mp3",
         }
 
-        const a = new Audio(AUDIO_PATHS[audioState]);
-        a.preload = 'auto';
-        a.pause();
-        a.load();
-        a.play();
-
+        playEffect(AUDIO_PATHS[audioState]!)
         setAudioState(undefined);
-    }, [audioState, setAudioState]);
+    }, [audioState, setAudioState, playEffect]);
     
     const routineEls = useMemo(() => {
         if(routines.length === 0) {

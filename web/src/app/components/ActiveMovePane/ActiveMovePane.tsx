@@ -9,6 +9,7 @@ import { useDevice } from '@/app/hooks/useDevice';
 import { useAndroid } from '@/app/hooks/useAndroid';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useKeyboard } from '@/app/hooks/useKeyboard';
+import { useSoundEffect } from '@/app/hooks/useSoundEffects';
 
 declare global {
     interface Window { 
@@ -37,6 +38,7 @@ export function ActiveMovePane() {
     const { isTV } = useDevice()
     const { isAndroid } = useAndroid();
     const [audioState, setAudioState] = useState<AudioState>();
+    const [playEffect] = useSoundEffect()
 
     const { time, el } = useMemo(() => {
         if(!workout || !set) {
@@ -91,17 +93,13 @@ export function ActiveMovePane() {
         }
 
         const AUDIO_PATHS:AudioMappings = {
-            "click": "/button.mp3",
-        }
+            "click": "/button.mp3"
+        };
 
-        const a = new Audio(AUDIO_PATHS[audioState]);
-        a.preload = 'auto';
-        a.pause();
-        a.load();
-        a.play();
+        playEffect(AUDIO_PATHS[audioState]!)
+        setAudioState(undefined);    
 
-        setAudioState(undefined);
-    }, [audioState, setAudioState]);    
+    }, [audioState, setAudioState, playEffect]);    
 
     const handleOnClick = () => {
         togglePlayPause();

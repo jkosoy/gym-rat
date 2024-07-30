@@ -7,6 +7,7 @@ import styles from './WorkoutScreen.module.css';
 import { useEffect, useMemo, useRef } from 'react';
 import { Status } from '@/app/contexts/WorkoutContext';
 import { WorkoutCompletePane } from '../WorkoutCompletePane';
+import { useSoundEffect } from '@/app/hooks/useSoundEffects';
 
 type AudioMappings = Record<Status, string|undefined>
 
@@ -16,6 +17,7 @@ export function WorkoutScreen() {
         sets,
         setIndex,
     } = useWorkout()
+    const [playEffect] = useSoundEffect()
 
     const isWorkoutComplete = sets && setIndex === sets.length;
 
@@ -36,13 +38,12 @@ export function WorkoutScreen() {
         }
 
         const url = AUDIO_PATHS[type];
+        if(!url) {
+            return;
+        }
 
-        const a = new Audio(url);
-        a.preload = 'auto';
-        a.pause();
-        a.load();
-        a.play();
-    }, [set, isWorkoutComplete]);
+        playEffect(url);
+    }, [set, isWorkoutComplete, playEffect]);
 
 
     const computedElement = useMemo(() => {
