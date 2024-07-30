@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export function useSoundEffect() {
     const [context, setContext] = useState<AudioContext>()
 
-    async function playEffect(url: string) {
+    const playEffect = useCallback(async (url:string) => {
         if(!context) {
             return;
         }
@@ -16,7 +16,7 @@ export function useSoundEffect() {
         source.buffer = audioBuffer
         source.connect(context.destination)
         source.start()    
-    }
+    }, [context])
 
     useEffect(() => {
         setContext(new AudioContext())

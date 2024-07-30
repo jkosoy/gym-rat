@@ -36,7 +36,7 @@ export function WorkoutScreen() {
         if(!type || AUDIO_PATHS[type] === undefined) {
             return
         }
-
+console.log(1);
         const url = AUDIO_PATHS[type];
         if(!url) {
             return;
