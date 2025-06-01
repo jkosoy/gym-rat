@@ -8,6 +8,7 @@ import { useEffect, useMemo, useRef } from 'react';
 import { Status } from '@/app/contexts/WorkoutContext';
 import { WorkoutCompletePane } from '../WorkoutCompletePane';
 import { useSoundEffect } from '@/app/hooks/useSoundEffects';
+import { useAndroid } from '@/app/hooks/useAndroid';
 
 type AudioMappings = Record<Status, string|undefined>
 
@@ -16,7 +17,10 @@ export function WorkoutScreen() {
         set,
         sets,
         setIndex,
+        closeWorkout
     } = useWorkout()
+    const { isAndroid } = useAndroid();
+
     const [playEffect] = useSoundEffect()
 
     const isWorkoutComplete = sets && setIndex === sets.length;
@@ -28,7 +32,8 @@ export function WorkoutScreen() {
             "recovery": "/recovery.mp3",
             "cooldown": "/cooldown.mp3",
             "warmup": "/warmup.mp3",
-            "complete": "/complete.mp3", // TODO.
+            "complete": "/complete.mp3",
+
         }
 
         const type = isWorkoutComplete ? "complete" : set?.type
@@ -36,7 +41,7 @@ export function WorkoutScreen() {
         if(!type || AUDIO_PATHS[type] === undefined) {
             return
         }
-console.log(1);
+
         const url = AUDIO_PATHS[type];
         if(!url) {
             return;
@@ -53,6 +58,17 @@ console.log(1);
 
         return isWorkoutComplete ? <WorkoutCompletePane /> : <ActiveMovePane />
     }, [isWorkoutComplete, sets])
+
+    useEffect(() => {
+        window.exitWorkout = () => {
+            playEffect("/button.mp3");
+            closeWorkout();
+        }
+
+        return () => {
+            window.exitWorkout = () => {}
+        }
+    }, [isAndroid,closeWorkout]);
 
     return(
         <>

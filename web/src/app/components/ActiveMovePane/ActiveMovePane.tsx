@@ -144,7 +144,6 @@ export function ActiveMovePane() {
     useKeyboard("Escape", { onKeyDown: handleCloseClick })
 
     useEffect(() => {
-        window.exitWorkout = handleCloseClick;
         window.onPause = handlePause;
         window.onResume = handleResume;
     }, [isAndroid, handleCloseClick, handlePause, handleResume])

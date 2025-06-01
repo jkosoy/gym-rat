@@ -20,6 +20,10 @@
   animation: in 800ms cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
 }
 
+.logo img {
+  width: 200px !important;
+}
+
 .picker {
   opacity: 0;
   animation: in 500ms cubic-bezier(0.215, 0.610, 0.355, 1.000) 300ms forwards;

@@ -1,7 +1,4 @@
 import Image from "next/image";
-import { Routine } from "@/app/types/Workout";
-import { getRoutines } from "@/app/api/workouts";
-
 import styles from './Logo.module.css';
 import icon from './icon.png';
 

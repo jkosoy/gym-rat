@@ -101,6 +101,7 @@
     align-items: center;
     justify-content: center;
     gap: calc(4px * var(--scale));
+    padding:0 calc(8px * var(--scale));
     font-size: calc(1rem * var(--scale));
     font-weight: var(--font-weight-light);
 }

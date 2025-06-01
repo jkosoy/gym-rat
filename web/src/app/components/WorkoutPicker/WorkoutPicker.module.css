@@ -1,11 +1,11 @@
 .pickerContainer {
     width: 100vw;
     display: flex;
-    flex-direction: column;
-    --selected-routine-index: 0;
-    --picker-gap: 25px;
-    transform: translate3d(0,0,0);
-    gap: calc(20px * var(--scale));
+    flex-direction: row;
+    --selected-row-index: 0;
+    --picker-gap: 12px;
+    gap: calc(12px * var(--scale));
+    padding: calc(12px * var(--scale));;
 }
 
 @media screen and (max-width: 480px) {
@@ -15,59 +15,52 @@
 }
 
 .nextButton { 
+    display: none;
     order: 3;
-    place-self: center;
     transform-origin: center;
-    transform: rotate(90deg) scale(1.25);
 }
 
 .prevButton { 
+    display: none;
     order: 1; 
-    place-self: center;
     transform-origin: center;
-    transform: rotate(-90deg) scale(1.25) translateY(calc(5px * var(--scale)));
 }
 
 .routineContainer { 
     order: 2;
-    flex:1 0 calc(50px * var(--scale));
+    flex: 1;
     overflow: hidden;
 }
 
 .routineScroller {
     --button: calc(52.5px * var(--scale));
     --gap: calc(var(--picker-gap) * var(--scale));
-    display: flex;
-    flex-direction: column;
-    gap: var(--gap);
-    transform: translateY(calc(var(--selected-routine-index, 0) * -1 * (var(--button) + var(--gap))));
-    transition: transform 300ms cubic-bezier(0.215, 0.610, 0.355, 1.000);
-}
+    --row-size: calc(95px * var(--scale));
+    --y: calc(var(--selected-row-index) * -1 * var(--row-size));
 
-.routine {
-    flex: 1 0 100%;
-    display: flex;
-    place-content: center;
-    place-items: center;
-    position: relative;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: auto;
+    gap: var(--gap);
+    transition: transform 200ms cubic-bezier(0.215, 0.610, 0.355, 1.000);
+    transform: translateY(var(--y));
 }
 
 .routine button {
-    min-width: calc(350px * var(--scale));
+    width: 100%;
     text-align: center;
-    font-size: calc(2.5rem * var(--scale));
+    font-size: calc(1.8rem * var(--scale));
     font-family: var(--font-family);
     font-weight: var(--font-weight-normal);
     background: rgba(0,0,0,0.125);
-    border-radius: calc(8px * var(--scale));
-    display: inline-block;
-    padding: calc(10px * var(--scale));
+    padding: calc(30px * var(--scale)) calc(10px * var(--scale));
     border: none;
     color: #fff;
     cursor: pointer;
     transition: background 200ms cubic-bezier(0.215, 0.610, 0.355, 1.000);
 }
 
+.selected,
 .routine button:hover {
     background:rgba(0,0,0,0.25);
 }

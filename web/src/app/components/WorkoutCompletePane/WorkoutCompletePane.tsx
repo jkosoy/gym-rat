@@ -14,7 +14,6 @@ type WorkoutCompletePaneProps = {}
 
 export function WorkoutCompletePane({}: PropsWithoutRef<WorkoutCompletePaneProps>) {
   const { closeWorkout } = useWorkout();
-  const { isAndroid } = useAndroid();
   const [audioState, setAudioState] = useState<AudioState>();
   const [playEffect] = useSoundEffect()
 
@@ -37,10 +36,6 @@ export function WorkoutCompletePane({}: PropsWithoutRef<WorkoutCompletePaneProps
       closeWorkout();
     },100);
   }, [closeWorkout,setAudioState])
-  
-  useEffect(() => {
-    window.exitWorkout = handleCloseClick;
-  }, [isAndroid, handleCloseClick])
   
   useKeyboard("Escape", { onKeyDown: handleCloseClick })
   
