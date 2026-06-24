@@ -10,6 +10,7 @@ import { useAndroid } from '@/app/hooks/useAndroid';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useKeyboard } from '@/app/hooks/useKeyboard';
 import { useSoundEffect } from '@/app/hooks/useSoundEffects';
+import { getNextWorkoutItemLabel } from './ActiveMovePane.utils';
 
 declare global {
     interface Window { 
@@ -26,6 +27,8 @@ export function ActiveMovePane() {
     const { 
         workout, 
         set,
+        sets,
+        setIndex,
         elapsedTime,
         togglePlayPause,
         prevSet,
@@ -38,6 +41,7 @@ export function ActiveMovePane() {
     const { isTV } = useDevice()
     const { isAndroid } = useAndroid();
     const [audioState, setAudioState] = useState<AudioState>();
+    const [isMobile, setIsMobile] = useState(false);
     const [playEffect] = useSoundEffect()
 
     const { time, el } = useMemo(() => {
@@ -81,6 +85,19 @@ export function ActiveMovePane() {
 
         return { time, el }        
     }, [workout, set])
+
+    useEffect(() => {
+        const updateIsMobile = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+
+        updateIsMobile();
+        window.addEventListener('resize', updateIsMobile);
+
+        return () => {
+            window.removeEventListener('resize', updateIsMobile);
+        };
+    }, []);
 
     const controlsClassName = classNames.bind(styles)({
         controlsContainer: true,
@@ -153,6 +170,8 @@ export function ActiveMovePane() {
         hidden: isTV
     })
 
+    const nextSetLabel = getNextWorkoutItemLabel(workout, sets, setIndex, elapsedTime);
+
     return (
         <div className={styles.container}>
             <div className={styles.controlsContainer}>
@@ -166,6 +185,9 @@ export function ActiveMovePane() {
             <div className={styles.infoContainer}>
                 <div className={styles.moveContainer}>
                     {el}
+                    {isMobile && nextSetLabel ? (
+                        <div className={styles.nextSetLabel}>Next: {nextSetLabel}</div>
+                    ) : null}
                 </div>
                 <div className={styles.progressBar}>
                     <Timer style="bar" currentTime={elapsedTime} totalTime={time} />

@@ -9,6 +9,7 @@ import { ButtonWithIcon } from "../ButtonWithIcon";
 import { useKeyboard } from "@/app/hooks/useKeyboard";
 import { useWorkout } from "@/app/hooks/useWorkout";
 import { useSoundEffect } from "@/app/hooks/useSoundEffects";
+import { resolveSelectedRoutine } from "./workoutPicker.utils";
 
 const ITEMS_PER_ROW = 6;
 
@@ -80,16 +81,19 @@ export function WorkoutPicker({callback}: PropsWithoutRef<WorkoutPickerProps>) {
         setAudioState("prev")
     }, [routines, selectedRoutine, setSelectedRoutine,setAudioState])
 
-    const selectRoutine = useCallback(async () => {
-        if(!selectedRoutine || isLoading) {
+    const selectRoutine = useCallback(async (routine?: Routine) => {
+        const resolvedRoutine = resolveSelectedRoutine(routines, selectedRoutine, routine);
+
+        if(!resolvedRoutine || isLoading) {
             return;
         }
 
+        setSelectedRoutine(resolvedRoutine);
         setAudioState("select");
         setIsLoading(true);
-        const workout = await getWorkout(selectedRoutine);
+        const workout = await getWorkout(resolvedRoutine);
         callback(workout);
-    }, [isLoading, setIsLoading, selectedRoutine, callback, setAudioState]);
+    }, [isLoading, routines, selectedRoutine, setSelectedRoutine, setIsLoading, callback, setAudioState]);
 
     useKeyboard("ArrowLeft", { onKeyDown: prevRoutine })
     useKeyboard("ArrowRight", { onKeyDown: nextRoutine })
@@ -137,7 +141,7 @@ export function WorkoutPicker({callback}: PropsWithoutRef<WorkoutPickerProps>) {
 
             return (
                 <div key={`rid_${routine.id}`} className={className}>
-                    <button onClick={selectRoutine}>{routine.name}</button>
+                    <button onClick={() => selectRoutine(routine)}>{routine.name}</button>
                 </div>
             );
         });

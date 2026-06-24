@@ -142,6 +142,13 @@
     margin: 0 auto;
 }
 
+.nextSetLabel {
+    margin-top: calc(8px * var(--scale));
+    font-size: calc(1.8rem * var(--scale));
+    font-weight: var(--font-weight-normal);
+    color: rgba(0, 0, 0, 0.75);
+}
+
 @media screen and (max-width: 768px) {
     :global(.is-webapp) .moveContainer h2 {
         font-size: calc(2.8rem * var(--scale));
