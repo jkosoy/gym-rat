@@ -10,7 +10,7 @@ import { useKeyboard } from "@/app/hooks/useKeyboard";
 import { useWorkout } from "@/app/hooks/useWorkout";
 import { useSoundEffect } from "@/app/hooks/useSoundEffects";
 import { resolveSelectedRoutine } from "./workoutPicker.utils";
-import { calculateScrollLeft } from "./touchScroll.utils";
+import { calculateScrollTop } from "./touchScroll.utils";
 
 const ITEMS_PER_ROW = 6;
 
@@ -27,8 +27,8 @@ export function WorkoutPicker({callback}: PropsWithoutRef<WorkoutPickerProps>) {
     const [selectedRoutine, setSelectedRoutine] = useState<Routine|undefined>();
     const [audioState, setAudioState] = useState<AudioState>();
     const [isTouchDragging, setIsTouchDragging] = useState(false);
-    const [touchStartX, setTouchStartX] = useState(0);
-    const [touchStartScrollLeft, setTouchStartScrollLeft] = useState(0);
+    const [touchStartY, setTouchStartY] = useState(0);
+    const [touchStartScrollTop, setTouchStartScrollTop] = useState(0);
     const { workout } = useWorkout();
     const [playEffect] = useSoundEffect();
 
@@ -134,8 +134,8 @@ export function WorkoutPicker({callback}: PropsWithoutRef<WorkoutPickerProps>) {
 
     const handleTouchStart = useCallback((event: React.TouchEvent<HTMLDivElement>) => {
         setIsTouchDragging(true);
-        setTouchStartX(event.touches[0].clientX);
-        setTouchStartScrollLeft(event.currentTarget.scrollLeft);
+        setTouchStartY(event.touches[0].clientY);
+        setTouchStartScrollTop(event.currentTarget.scrollTop);
     }, []);
 
     const handleTouchMove = useCallback((event: React.TouchEvent<HTMLDivElement>) => {
@@ -143,14 +143,14 @@ export function WorkoutPicker({callback}: PropsWithoutRef<WorkoutPickerProps>) {
             return;
         }
 
-        const nextScrollLeft = calculateScrollLeft(
-            touchStartX,
-            event.touches[0].clientX,
-            touchStartScrollLeft,
+        const nextScrollTop = calculateScrollTop(
+            touchStartY,
+            event.touches[0].clientY,
+            touchStartScrollTop,
         );
 
-        event.currentTarget.scrollLeft = nextScrollLeft;
-    }, [isTouchDragging, touchStartScrollLeft, touchStartX]);
+        event.currentTarget.scrollTop = nextScrollTop;
+    }, [isTouchDragging, touchStartScrollTop, touchStartY]);
 
     const handleTouchEnd = useCallback(() => {
         setIsTouchDragging(false);
