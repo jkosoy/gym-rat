@@ -18,20 +18,29 @@
     }
 
     .routineContainer {
-        max-height: min(60vh, 420px);
-        overflow-y: auto;
+        overflow-x: auto;
+        overflow-y: hidden;
         -webkit-overflow-scrolling: touch;
-        touch-action: pan-y;
+        touch-action: pan-x;
     }
 
     .routineScroller {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
+        gap: calc(8px * var(--scale));
+        width: max-content;
+        min-width: 100%;
         transform: none;
     }
 
     .routine {
-        width: 100%;
+        width: min(84vw, 320px);
+        flex: 0 0 auto;
+    }
+
+    .routine button {
+        min-height: calc(88px * var(--scale));
+        padding: calc(20px * var(--scale)) calc(16px * var(--scale));
     }
 }
 
