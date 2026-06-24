@@ -1,13 +1,18 @@
 import { useEffect } from "react";
+import { useDevice } from "./useDevice";
 
 interface KeyboardParams {
   onKeyDown?: () => void,
   onKeyUp?: () => void,
 }
 
-export function shouldEnableKeyboardNavigation(windowRef: Window = window) {
+export function shouldEnableKeyboardNavigation(windowRef: Window = window, isTV = false) {
     if (typeof windowRef === "undefined") {
         return false;
+    }
+
+    if (isTV) {
+        return true;
     }
 
     const isTouchDevice = windowRef.navigator?.maxTouchPoints > 0;
@@ -17,8 +22,10 @@ export function shouldEnableKeyboardNavigation(windowRef: Window = window) {
 }
 
 export function useKeyboard(key:string, {onKeyDown=undefined, onKeyUp=undefined}: KeyboardParams) {
+    const { isTV } = useDevice();
+
     useEffect(() => {
-        if (!shouldEnableKeyboardNavigation(window)) {
+        if (!shouldEnableKeyboardNavigation(window, isTV)) {
             return;
         }
 
@@ -49,5 +56,5 @@ export function useKeyboard(key:string, {onKeyDown=undefined, onKeyUp=undefined}
             document.removeEventListener("keydown", keyDownHandler);
             document.removeEventListener("keyup", keyUpHandler);
         }
-    }, [key, onKeyDown, onKeyUp])
+    }, [key, onKeyDown, onKeyUp, isTV])
 }

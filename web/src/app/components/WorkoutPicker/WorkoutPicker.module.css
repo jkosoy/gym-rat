@@ -18,23 +18,23 @@
     }
 
     .routineContainer {
-        overflow-x: auto;
-        overflow-y: hidden;
+        overflow-y: auto;
+        overflow-x: hidden;
         -webkit-overflow-scrolling: touch;
-        touch-action: pan-x;
+        touch-action: pan-y;
     }
 
     .routineScroller {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         gap: calc(8px * var(--scale));
-        width: max-content;
+        width: 100%;
         min-width: 100%;
         transform: none;
     }
 
     .routine {
-        width: min(84vw, 320px);
+        width: 100%;
         flex: 0 0 auto;
     }
 

@@ -19,3 +19,12 @@ test('keeps keyboard navigation enabled on desktops', () => {
 
   assert.equal(enabled, true);
 });
+
+test('keeps keyboard navigation enabled in TV mode', () => {
+  const enabled = shouldEnableKeyboardNavigation({
+    innerWidth: 375,
+    navigator: { maxTouchPoints: 5 } as Navigator,
+  } as Window, true);
+
+  assert.equal(enabled, true);
+});
