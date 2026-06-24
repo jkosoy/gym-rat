@@ -3,5 +3,5 @@ export function calculateScrollTop(
   currentY: number,
   startScrollTop: number,
 ): number {
-  return startScrollTop + (currentY - startY);
+  return startScrollTop - (currentY - startY);
 }
