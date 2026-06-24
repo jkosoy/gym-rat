@@ -12,6 +12,27 @@
     :global(.is-webapp) .pickerContainer {
         --scale: 0.75;
     }
+
+    .pickerContainer {
+        padding: calc(8px * var(--scale));
+    }
+
+    .routineContainer {
+        max-height: min(60vh, 420px);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        touch-action: pan-y;
+    }
+
+    .routineScroller {
+        display: flex;
+        flex-direction: column;
+        transform: none;
+    }
+
+    .routine {
+        width: 100%;
+    }
 }
 
 .nextButton { 
@@ -30,6 +51,10 @@
     order: 2;
     flex: 1;
     overflow: hidden;
+}
+
+.routine {
+    width: 100%;
 }
 
 .routineScroller {
