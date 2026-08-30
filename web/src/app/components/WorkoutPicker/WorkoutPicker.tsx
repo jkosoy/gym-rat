@@ -1,6 +1,7 @@
 import { getRoutineDurations, getRoutines, getWorkout } from "@/app/api/workouts";
 import { Routine } from "@/app/types/Workout";
 import { SkeletonPicker } from '@/app/components/SkeletonPicker';
+import { LoadingDots } from '@/app/components/LoadingDots';
 
 import styles from './WorkoutPicker.module.css';
 import classNames from 'classnames/bind'
@@ -9,7 +10,7 @@ import { ButtonWithIcon } from "../ButtonWithIcon";
 import { useKeyboard } from "@/app/hooks/useKeyboard";
 import { useWorkout } from "@/app/hooks/useWorkout";
 import { useSoundEffect } from "@/app/hooks/useSoundEffects";
-import { formatDuration } from "@/app/helpers/time";
+import { formatTime } from "@/app/helpers/time";
 import { resolveSelectedRoutine } from "./workoutPicker.utils";
 import { calculateScrollTop } from "./touchScroll.utils";
 
@@ -183,7 +184,7 @@ export function WorkoutPicker({callback}: PropsWithoutRef<WorkoutPickerProps>) {
                 <div key={`rid_${routine.id}`} className={className}>
                     <button onClick={() => selectRoutine(routine)}>
                         <span className={styles.routineName}>{routine.name}</span>
-                        <span className={styles.routineDuration}>{duration ? formatDuration(duration) : "\u00a0"}</span>
+                        <span className={styles.routineDuration}>{duration ? formatTime(duration) : <LoadingDots />}</span>
                     </button>
                 </div>
             );

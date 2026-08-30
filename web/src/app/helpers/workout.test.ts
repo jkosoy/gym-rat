@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { getSets, getTotalTime } from './workout';
-import { formatDuration } from './time';
+import { formatTime } from './time';
 import { Workout } from '../types/Workout';
 
 const workout = {
@@ -36,9 +36,8 @@ test('has no total time without a workout', () => {
   assert.equal(getTotalTime(getSets()), 0);
 });
 
-test('formats a duration as HH:MM:SS', () => {
-  assert.equal(formatDuration(0), '00:00:00');
-  assert.equal(formatDuration(420), '00:07:00');
-  assert.equal(formatDuration(3661), '01:01:01');
-  assert.equal(formatDuration(-30), '00:00:00');
+test('formats a total time, only reaching for hours when there are any', () => {
+  assert.equal(formatTime(0), '00:00');
+  assert.equal(formatTime(getTotalTime(getSets(workout))), '07:00');
+  assert.equal(formatTime(3661), '1:01:01');
 });

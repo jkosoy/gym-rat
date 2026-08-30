@@ -1,0 +1,42 @@
+/* sized off the text around it so it drops into a line without changing its height. */
+.container {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(0.3em * var(--scale));
+    vertical-align: middle;
+}
+
+.dot {
+    width: calc(0.4em * var(--scale));
+    height: calc(0.4em * var(--scale));
+    border-radius: 50%;
+    background: currentColor;
+    animation: pulse 1400ms cubic-bezier(0.215, 0.610, 0.355, 1.000) infinite;
+}
+
+.dot:nth-child(2) {
+    animation-delay: 160ms;
+}
+
+.dot:nth-child(3) {
+    animation-delay: 320ms;
+}
+
+@keyframes pulse {
+    0%, 80%, 100% {
+        opacity: 0.3;
+        transform: scale(0.8);
+    }
+
+    40% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dot {
+        animation: none;
+        opacity: 0.6;
+    }
+}
