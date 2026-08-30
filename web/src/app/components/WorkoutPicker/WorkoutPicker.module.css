@@ -71,8 +71,9 @@
 
 .routineScroller {
     --button: calc(52.5px * var(--scale));
+    --button-height: calc(83px * var(--scale));
     --gap: calc(var(--picker-gap) * var(--scale));
-    --row-size: calc(95px * var(--scale));
+    --row-size: calc(var(--button-height) + var(--gap));
     --y: calc(var(--selected-row-index) * -1 * var(--row-size));
 
     display: grid;
@@ -96,19 +97,45 @@
 
 .routine button {
     width: 100%;
+    height: var(--button-height);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: calc(4px * var(--scale));
     text-align: center;
     font-size: calc(1.8rem * var(--scale));
     font-family: var(--font-family);
     font-weight: var(--font-weight-normal);
     background: rgba(0,0,0,0.125);
-    padding: calc(30px * var(--scale)) calc(10px * var(--scale));
+    padding: calc(8px * var(--scale)) calc(10px * var(--scale));
     border: none;
     color: #fff;
     cursor: pointer;
+    overflow: hidden;
     transition: background 200ms cubic-bezier(0.215, 0.610, 0.355, 1.000);
+}
+
+.routineName {
+    line-height: 1.2;
+}
+
+.routineDuration {
+    font-size: calc(1.2rem * var(--scale));
+    font-weight: var(--font-weight-light);
+    font-variant-numeric: tabular-nums;
+    opacity: 0.7;
 }
 
 .selected,
 .routine button:hover {
     background:rgba(0,0,0,0.25);
+}
+
+/* mobile stacks the routines instead of scrolling a grid, so buttons size to their content. */
+@media screen and (max-width: 480px) {
+    .routine button {
+        height: auto;
+        min-height: calc(88px * var(--scale));
+    }
 }
