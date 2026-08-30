@@ -2,6 +2,7 @@
 
 import { Context, createContext, Dispatch, PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Circuit, ExcerciseSet, Workout } from "@/app/types/Workout";
+import { getSets, getTotalTime } from "@/app/helpers/workout";
 
 export type Status = 'active' | 'recovery' | 'warmup' | 'cooldown' | 'circuit-recovery' | 'complete';
 
@@ -30,21 +31,9 @@ export function WorkoutProvider({children}: PropsWithChildren) {
   const [isPaused, setIsPaused] = useState(false)
   const [workout, setWorkout] = useState<Workout>()
   
-  const sets = useMemo(() => {
-    if(!workout) {
-      return [];
-    }
+  const sets = useMemo(() => getSets(workout), [workout])
 
-    return workout.circuits.flatMap(circuit => circuit.sets);
-  }, [workout])
-
-  const totalTime = useMemo(() => {
-    if(!workout) { 
-      return 0;
-    }
-
-    return sets.reduce((total, set) => total + set.time, 0);
-  }, [workout, sets])
+  const totalTime = useMemo(() => getTotalTime(sets), [sets])
 
   const set = useMemo(() => workout ? sets[setIndex] : undefined, [workout, sets, setIndex]);
   

@@ -1,4 +1,4 @@
-import { getRoutines, getWorkout } from "@/app/api/workouts";
+import { getRoutineDurations, getRoutines, getWorkout } from "@/app/api/workouts";
 import { Routine } from "@/app/types/Workout";
 import { SkeletonPicker } from '@/app/components/SkeletonPicker';
 
@@ -9,6 +9,7 @@ import { ButtonWithIcon } from "../ButtonWithIcon";
 import { useKeyboard } from "@/app/hooks/useKeyboard";
 import { useWorkout } from "@/app/hooks/useWorkout";
 import { useSoundEffect } from "@/app/hooks/useSoundEffects";
+import { formatDuration } from "@/app/helpers/time";
 import { resolveSelectedRoutine } from "./workoutPicker.utils";
 import { calculateScrollTop } from "./touchScroll.utils";
 
@@ -24,6 +25,7 @@ type WorkoutPickerProps = {
 export function WorkoutPicker({callback}: PropsWithoutRef<WorkoutPickerProps>) {
     const [isLoading, setIsLoading] = useState(true);
     const [routines, setRoutines] = useState<Routine[]>([]);
+    const [durations, setDurations] = useState<Record<string, number>>({});
     const [selectedRoutine, setSelectedRoutine] = useState<Routine|undefined>();
     const [audioState, setAudioState] = useState<AudioState>();
     const [isTouchDragging, setIsTouchDragging] = useState(false);
@@ -111,7 +113,15 @@ export function WorkoutPicker({callback}: PropsWithoutRef<WorkoutPickerProps>) {
         setRoutines(routines);
         setSelectedRoutine(routines[0]);
         setIsLoading(false);
-    }, [setRoutines, setSelectedRoutine, setIsLoading]);
+
+        // durations take a second pass through notion, so let the picker come up first.
+        try {
+            setDurations(await getRoutineDurations(routines));
+        }
+        catch(e) {
+            console.error("Failed to load routine durations.");
+        }
+    }, [setRoutines, setSelectedRoutine, setIsLoading, setDurations]);
 
     useEffect(() => {
         loadRoutines();
@@ -167,9 +177,14 @@ export function WorkoutPicker({callback}: PropsWithoutRef<WorkoutPickerProps>) {
                 selected: selectedRoutine?.id === routine.id,
             });
 
+            const duration = durations[routine.id];
+
             return (
                 <div key={`rid_${routine.id}`} className={className}>
-                    <button onClick={() => selectRoutine(routine)}>{routine.name}</button>
+                    <button onClick={() => selectRoutine(routine)}>
+                        <span className={styles.routineName}>{routine.name}</span>
+                        <span className={styles.routineDuration}>{duration ? formatDuration(duration) : "\u00a0"}</span>
+                    </button>
                 </div>
             );
         });

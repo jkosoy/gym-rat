@@ -4,7 +4,19 @@ import { Client } from "@notionhq/client";
 import { BlockObjectResponse, QueryDatabaseResponse } from "@notionhq/client/build/src/api-endpoints";
 
 import { sleep } from "@/app/helpers/utility";
-import { Routine, Workout, Circuit, ExcerciseSet, Move } from "@/app/types/Workout";
+import { getTotalTime } from "@/app/helpers/workout";
+import { Routine, Workout, Circuit, CircuitType, ExcerciseSet, Move } from "@/app/types/Workout";
+
+type RawCircuit = QueryDatabaseResponse["results"][number];
+
+// everything a circuit needs to lay out its sets, minus the moves themselves.
+type CircuitTiming = {
+  type: CircuitType,
+  totalSets: number,
+  activeSeconds: number,
+  recoverySeconds: number,
+  hasCircuitRecovery: boolean
+}
 
 const notion = new Client({
   auth: process.env.NOTION_TOKEN,
@@ -54,6 +66,114 @@ async function getDatabaseInPage(pageId: string): Promise<QueryDatabaseResponse|
   
     return rawDatabase;  
   }
+}
+
+// a circuit's shape is described entirely by its own properties, so its timing
+// can be read without walking down into the moves it contains.
+function getCircuitTiming(rawCircuit: RawCircuit, name: string): CircuitTiming {
+  const type = ((): CircuitType => {
+    if(name === "Warmup") {
+      return "warmup";
+    }
+
+    if(name === "Cooldown") {
+      return "cooldown";
+    }
+
+    try {
+      // @ts-ignore: circuit is loaded and if a set has a type defined this will exist
+      const t = rawCircuit.properties["Type"].select.name
+
+      if(t === "Stations") {
+        return "stations";
+      }
+
+      if(t === "Manual Reps") {
+        return "manual";
+      }
+
+      return "amrap";
+    }
+    catch(e) {
+      // AMRAP is default to make it easy to set up single sets like jump ropes
+      return "amrap";
+    }
+  })();
+
+  // @ts-ignore: circuit is loaded
+  const totalSets = rawCircuit.properties["Sets"].number || 1;
+  // @ts-ignore: circuit is loaded
+  const activeSeconds = rawCircuit.properties["High"].number || 0;
+  // @ts-ignore: circuit is loaded
+  const recoverySeconds = rawCircuit.properties["Low"].number || 0;
+
+  let hasCircuitRecovery = true;
+  try {
+    // @ts-ignore: circuit is loaded
+    hasCircuitRecovery = (rawCircuit.properties["Skip Circuit Recovery?"].checkbox === true) ? false : true;
+  }
+  catch(e) {}
+
+  return {
+    type,
+    totalSets,
+    activeSeconds,
+    recoverySeconds,
+    hasCircuitRecovery
+  }
+}
+
+// expand a circuit into the sets it plays out as. moves are optional: pass none
+// when only the timing of the sets matters.
+function buildSets(timing: CircuitTiming, routineRecoverySeconds: number, moves: Array<Move[]> = []): ExcerciseSet[] {
+  const { type, totalSets, activeSeconds, recoverySeconds, hasCircuitRecovery } = timing;
+  const sets:ExcerciseSet[] = [];
+  let currentGroup = 0;
+
+  if(type === "warmup" || type === "cooldown") {
+    sets.push({
+      type: type,
+      time: recoverySeconds,
+      autoAdvance: true,
+      moves: []
+    })
+
+    return sets;
+  }
+
+  for(let i=0;i<totalSets;i++) {
+    sets.push({
+      type: "active",
+      time: activeSeconds,
+      autoAdvance: type !== "manual",
+      moves: moves[currentGroup] ?? []
+    })
+
+    if(recoverySeconds > 0) {
+      sets.push({
+        type: "recovery",
+        time: recoverySeconds,
+        autoAdvance: true,
+        moves: []
+      })
+    }  
+
+    currentGroup++;
+    if(currentGroup >= moves.length) {
+      currentGroup = 0;
+    }  
+  }
+
+  if(hasCircuitRecovery) {
+    sets.push({
+      type: "circuit-recovery",
+      time: routineRecoverySeconds,
+      autoAdvance: true,
+      moves: []
+    })  
+  }
+
+  return sets;
 }
 
 // workouts are a complex graph of embedded database blocks. let's walk the tree to retrieve them.
@@ -120,98 +240,12 @@ export async function getWorkout(routine: Routine): Promise<Workout> {
       )
     }
 
-    const type = (() => {
-      if(name === "Warmup") {
-        return "warmup";
-      }
-
-      if(name === "Cooldown") {
-        return "cooldown";
-      }
-
-      try {
-        // @ts-ignore: circuit is loaded and if a set has a type defined this will exist
-        const t = rawCircuit.properties["Type"].select.name
-
-        if(t === "Stations") {
-          return "stations";
-        }
-
-        if(t === "Manual Reps") {
-          return "manual";
-        }
-
-        return "amrap";
-      }
-      catch(e) {
-        // AMRAP is default to make it easy to set up single sets like jump ropes
-        return "amrap";
-      }
-    })();
-
-    // @ts-ignore: circuit is loaded
-    const totalSets = rawCircuit.properties["Sets"].number || 1;
-    // @ts-ignore: circuit is loaded
-    const activeSeconds = rawCircuit.properties["High"].number || 0;
-    // @ts-ignore: circuit is loaded
-    const recoverySeconds = rawCircuit.properties["Low"].number || 0;
-
-    let hasCircuitRecovery = true;
-    try {
-      // @ts-ignore: circuit is loaded
-      hasCircuitRecovery = (rawCircuit.properties["Skip Circuit Recovery?"].checkbox === true) ? false : true;
-    }
-    catch(e) {}
-
-    const sets:ExcerciseSet[] = [];
-    let currentGroup = 0;
-
-    if(type === "warmup" || type === "cooldown") {
-      sets.push({
-        type: type,
-        time: recoverySeconds,
-        autoAdvance: true,
-        moves: []
-      })
-    }
-    else {
-      for(let i=0;i<totalSets;i++) {
-        sets.push({
-          type: "active",
-          time: activeSeconds,
-          autoAdvance: type !== "manual",
-          moves: moves[currentGroup]
-        })
-  
-        if(recoverySeconds > 0) {
-          sets.push({
-            type: "recovery",
-            time: recoverySeconds,
-            autoAdvance: true,
-            moves: []
-          })
-        }  
-  
-        currentGroup++;
-        if(currentGroup >= moves.length) {
-          currentGroup = 0;
-        }  
-      }
-
-      if(hasCircuitRecovery) {
-        sets.push({
-          type: "circuit-recovery",
-          time: routineRecoverySeconds,
-          autoAdvance: true,
-          moves: []
-        })  
-      }  
-    }
+    const timing = getCircuitTiming(rawCircuit, name);
 
     return {
       name,
-      type,
-      sets
+      type: timing.type,
+      sets: buildSets(timing, routineRecoverySeconds, moves)
     }
   }));
 
@@ -224,6 +258,35 @@ export async function getWorkout(routine: Routine): Promise<Workout> {
     name: routineName,
     circuits,
   }
+}
+
+// the menu needs to know how long each routine runs before anyone picks one.
+// a routine's circuits carry all of the timing, so we can stop at that level
+// rather than resolving every move like getWorkout does.
+export async function getRoutineDurations(routines: Routine[]): Promise<Record<string, number>> {
+  const durations = await Promise.all(routines.map(async routine => {
+    try {
+      const rawCircuitsDB = await getDatabaseInPage(routine.id);
+      if(!rawCircuitsDB) {
+        return [routine.id, 0] as const;
+      }
+
+      const sets = rawCircuitsDB.results.flatMap(rawCircuit => {
+        // @ts-ignore: circuit is loaded
+        const name = rawCircuit.properties["Name"].title[0].plain_text;
+
+        return buildSets(getCircuitTiming(rawCircuit, name), routine.recoverySeconds);
+      });
+
+      return [routine.id, getTotalTime(sets)] as const;
+    }
+    catch(e) {
+      console.error(`Failed to calculate a duration for routine :: ${routine.id}`);
+      return [routine.id, 0] as const;
+    }
+  }));
+
+  return Object.fromEntries(durations);
 }
 
 export async function getRoutines(): Promise<Routine[]> {  
