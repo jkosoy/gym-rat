@@ -13,6 +13,18 @@ import { useSoundEffect } from "@/app/hooks/useSoundEffects";
 import { formatTime } from "@/app/helpers/time";
 import { resolveSelectedRoutine } from "./workoutPicker.utils";
 import { calculateScrollTop } from "./touchScroll.utils";
+import { useDevice } from "@/app/hooks/useDevice";
+import { getSets, getTotalTime } from "@/app/helpers/workout";
+import {
+    cacheDurations,
+    cacheRoutines,
+    getCachedDurations,
+    getDownloadedWorkout,
+    getDownloads,
+    getOfflineRoutines,
+    removeDownload,
+    saveDownload,
+} from "@/app/helpers/offline";
 
 const ITEMS_PER_ROW = 6;
 
@@ -32,7 +44,11 @@ export function WorkoutPicker({callback}: PropsWithoutRef<WorkoutPickerProps>) {
     const [isTouchDragging, setIsTouchDragging] = useState(false);
     const [touchStartY, setTouchStartY] = useState(0);
     const [touchStartScrollTop, setTouchStartScrollTop] = useState(0);
+    const [isOffline, setIsOffline] = useState(false);
+    const [downloadedIds, setDownloadedIds] = useState<Set<string>>(new Set());
+    const [downloadingIds, setDownloadingIds] = useState<Set<string>>(new Set());
     const { workout } = useWorkout();
+    const { isTV } = useDevice();
     const [playEffect] = useSoundEffect();
 
     const prevRow = useCallback(() => {
@@ -95,12 +111,67 @@ export function WorkoutPicker({callback}: PropsWithoutRef<WorkoutPickerProps>) {
             return;
         }
 
+        const saved = getDownloadedWorkout(resolvedRoutine.id);
+        if(!saved && isOffline) {
+            return;
+        }
+
         setSelectedRoutine(resolvedRoutine);
         setAudioState("select");
+
+        // a downloaded workout starts right away, even with no signal. refresh
+        // the saved copy quietly so edits in notion show up next time.
+        if(saved) {
+            callback(saved);
+            getWorkout(resolvedRoutine)
+                .then(fresh => saveDownload(resolvedRoutine, fresh))
+                .catch(() => {});
+            return;
+        }
+
         setIsLoading(true);
-        const workout = await getWorkout(resolvedRoutine);
-        callback(workout);
-    }, [isLoading, routines, selectedRoutine, setSelectedRoutine, setIsLoading, callback, setAudioState]);
+        try {
+            callback(await getWorkout(resolvedRoutine));
+        }
+        catch(e) {
+            console.error(`Failed to load ${resolvedRoutine.name}.`, e);
+            setIsOffline(true);
+            setIsLoading(false);
+        }
+    }, [isLoading, isOffline, routines, selectedRoutine, setSelectedRoutine, setIsLoading, callback, setAudioState]);
+
+    const toggleDownload = useCallback(async (routine: Routine) => {
+        if(downloadingIds.has(routine.id)) {
+            return;
+        }
+
+        if(downloadedIds.has(routine.id)) {
+            removeDownload(routine.id);
+            setDownloadedIds(new Set(Object.keys(getDownloads())));
+            return;
+        }
+
+        setDownloadingIds(ids => new Set(ids).add(routine.id));
+        try {
+            const workout = await getWorkout(routine);
+            if(!saveDownload(routine, workout)) {
+                alert("Couldn't save this workout to your phone. Is storage full?");
+            }
+            setDurations(durations => ({...durations, [routine.id]: getTotalTime(getSets(workout))}));
+        }
+        catch(e) {
+            console.error(`Failed to download ${routine.name}.`, e);
+            setIsOffline(true);
+        }
+        finally {
+            setDownloadedIds(new Set(Object.keys(getDownloads())));
+            setDownloadingIds(ids => {
+                const next = new Set(ids);
+                next.delete(routine.id);
+                return next;
+            });
+        }
+    }, [downloadedIds, downloadingIds]);
 
     useKeyboard("ArrowLeft", { onKeyDown: prevRoutine })
     useKeyboard("ArrowRight", { onKeyDown: nextRoutine })
@@ -110,14 +181,42 @@ export function WorkoutPicker({callback}: PropsWithoutRef<WorkoutPickerProps>) {
     useKeyboard("Enter", { onKeyDown: selectRoutine });
 
     const loadRoutines = useCallback(async () => {
-        const routines = await getRoutines();
+        let routines: Routine[];
+        let offline = false;
+
+        try {
+            routines = await getRoutines();
+            cacheRoutines(routines);
+        }
+        catch(e) {
+            // no signal (or notion is down): fall back to what's saved on this device.
+            console.warn("Couldn't reach notion, using saved workouts.", e);
+            routines = getOfflineRoutines();
+            offline = true;
+        }
+
+        const downloads = getDownloads();
+        const savedDurations = getCachedDurations();
+        Object.values(downloads).forEach(({ routine, workout }) => {
+            savedDurations[routine.id] ??= getTotalTime(getSets(workout));
+        });
+
+        setIsOffline(offline);
+        setDownloadedIds(new Set(Object.keys(downloads)));
+        setDurations(savedDurations);
         setRoutines(routines);
         setSelectedRoutine(routines[0]);
         setIsLoading(false);
 
+        if(offline) {
+            return;
+        }
+
         // durations take a second pass through notion, so let the picker come up first.
         try {
-            setDurations(await getRoutineDurations(routines));
+            const durations = await getRoutineDurations(routines);
+            setDurations(durations);
+            cacheDurations(durations);
         }
         catch(e) {
             console.error("Failed to load routine durations.");
@@ -173,25 +272,64 @@ export function WorkoutPicker({callback}: PropsWithoutRef<WorkoutPickerProps>) {
         }
 
         return routines.map(routine => {
+            const isDownloaded = downloadedIds.has(routine.id);
+            const isDownloading = downloadingIds.has(routine.id);
+            const isUnavailable = isOffline && !isDownloaded;
+
             const className = classNames.bind(styles)({
                 routine: true,
                 selected: selectedRoutine?.id === routine.id,
+                unavailable: isUnavailable,
             });
 
             const duration = durations[routine.id];
+            const durationEl = (() => {
+                if(duration) {
+                    return formatTime(duration);
+                }
+                return isOffline ? "" : <LoadingDots />;
+            })();
+
+            const downloadLabel = isDownloaded
+                ? `Remove ${routine.name} from this device`
+                : `Download ${routine.name} for offline use`;
 
             return (
                 <div key={`rid_${routine.id}`} className={className}>
-                    <button onClick={() => selectRoutine(routine)}>
+                    <button onClick={() => selectRoutine(routine)} disabled={isUnavailable}>
                         <span className={styles.routineName}>{routine.name}</span>
-                        <span className={styles.routineDuration}>{duration ? formatTime(duration) : <LoadingDots />}</span>
+                        <span className={styles.routineDuration}>{durationEl}</span>
                     </button>
+                    {!isTV && (isDownloaded || !isOffline) && (
+                        <button
+                            className={classNames.bind(styles)({
+                                downloadButton: true,
+                                isDownloaded,
+                                isDownloading,
+                            })}
+                            onClick={() => toggleDownload(routine)}
+                            aria-label={downloadLabel}
+                            title={downloadLabel}
+                            disabled={isDownloading || (isOffline && isDownloaded)}
+                        >
+                            <DownloadIcon state={isDownloading ? "downloading" : isDownloaded ? "downloaded" : "idle"} />
+                        </button>
+                    )}
                 </div>
             );
         });
     })();
 
     const computedComponent = (() => {
+        if(!isLoading && isOffline && routines.length === 0) {
+            return (
+                <p className={styles.offlineMessage}>
+                    You&apos;re offline and no workouts are downloaded yet.
+                    Tap the download button on a workout next time you have signal.
+                </p>
+            );
+        }
+
         if(isLoading || routines.length === 0 || workout !== undefined) {
             return <SkeletonPicker />
         }
@@ -229,7 +367,33 @@ export function WorkoutPicker({callback}: PropsWithoutRef<WorkoutPickerProps>) {
 
     return (
         <div className={styles.container}>
+            {isOffline && routines.length > 0 && (
+                <p className={styles.offlineBanner}>Offline: showing downloaded workouts</p>
+            )}
             {computedComponent}
         </div>
     )
+}
+type DownloadIconProps = {
+    state: "idle" | "downloading" | "downloaded"
+}
+
+function DownloadIcon({state}: PropsWithoutRef<DownloadIconProps>) {
+    if(state === "downloading") {
+        return <LoadingDots />;
+    }
+
+    if(state === "downloaded") {
+        return (
+            <svg viewBox="0 0 24 24" width="100%" height="100%" aria-hidden="true">
+                <path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+        );
+    }
+
+    return (
+        <svg viewBox="0 0 24 24" width="100%" height="100%" aria-hidden="true">
+            <path d="M12 4v11M7 10.5l5 5 5-5M5 19.5h14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+    );
 }

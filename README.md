@@ -29,6 +29,13 @@ adb connect [IP Address of Google TV]
 
 ## Web App
 
+### iPhone
+
+- Open the site in Safari, tap Share, then **Add to Home Screen**. It launches full screen like an app.
+- Tap the download arrow on a workout to save it to the phone. Downloaded workouts (checkmark) start instantly and work with no signal; the app falls back to them automatically when Notion can't be reached.
+- The screen stays awake during a workout (iOS 18.4+ when added to the home screen).
+- After changing anything in `web/public` (sounds, videos), bump `VERSION` in `web/public/sw.js` so phones pick up the new files.
+
 To generate appropriate code...
 
 ```

@@ -45,3 +45,16 @@ body {
   font-size: var(--font-size-normal);
   color: var(--font-color);
 }
+/* no rubber band scrolling or long press callouts when it's on a home screen. */
+html,
+body {
+  overscroll-behavior: none;
+  -webkit-text-size-adjust: 100%;
+}
+
+button {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
