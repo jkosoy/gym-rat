@@ -9,6 +9,7 @@ import { Status } from '@/app/contexts/WorkoutContext';
 import { WorkoutCompletePane } from '../WorkoutCompletePane';
 import { useSoundEffect } from '@/app/hooks/useSoundEffects';
 import { useAndroid } from '@/app/hooks/useAndroid';
+import { useWakeLock } from '@/app/hooks/useWakeLock';
 
 type AudioMappings = Record<Status, string|undefined>
 
@@ -24,6 +25,8 @@ export function WorkoutScreen() {
     const [playEffect] = useSoundEffect()
 
     const isWorkoutComplete = sets && setIndex === sets.length;
+
+    useWakeLock(!isWorkoutComplete);
 
     useEffect(() => {
         const AUDIO_PATHS:AudioMappings = {

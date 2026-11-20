@@ -145,3 +145,80 @@
         min-height: calc(88px * var(--scale));
     }
 }
+
+/* downloads: a small toggle in the corner of each routine for saving it to the phone. */
+.routine {
+    position: relative;
+}
+
+.routine button {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.routine .downloadButton {
+    position: absolute;
+    top: calc(6px * var(--scale));
+    right: calc(6px * var(--scale));
+    width: calc(36px * var(--scale));
+    height: calc(36px * var(--scale));
+    min-height: 0;
+    padding: calc(8px * var(--scale));
+    border-radius: 50%;
+    background: transparent;
+    color: #fff;
+    opacity: 0.55;
+    font-size: calc(0.6rem * var(--scale));
+}
+
+.routine .downloadButton:hover {
+    background: rgba(0,0,0,0.2);
+    opacity: 1;
+}
+
+.routine .downloadButton.isDownloaded {
+    background: rgba(255,255,255,0.2);
+    opacity: 1;
+}
+
+.routine .downloadButton.isDownloading {
+    opacity: 1;
+    cursor: progress;
+}
+
+.unavailable > button:first-child {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.offlineBanner,
+.offlineMessage {
+    text-align: center;
+    font-size: calc(1.4rem * var(--scale));
+    font-weight: var(--font-weight-light);
+    opacity: 0.8;
+    padding: calc(8px * var(--scale)) calc(16px * var(--scale));
+}
+
+.offlineMessage {
+    max-width: 32ch;
+    margin: 0 auto;
+    line-height: 1.4;
+}
+
+@media screen and (max-width: 480px) {
+    .routine .downloadButton {
+        width: calc(44px * var(--scale));
+        height: calc(44px * var(--scale));
+        min-height: 0;
+        padding: calc(10px * var(--scale));
+        top: 50%;
+        right: calc(10px * var(--scale));
+        transform: translateY(-50%);
+    }
+
+    .routine > button:first-child {
+        padding-right: calc(56px * var(--scale));
+        padding-left: calc(56px * var(--scale));
+    }
+}
