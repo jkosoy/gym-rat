@@ -4,8 +4,26 @@
     height: 100%;
 }
 
-@media screen and (max-width: 1024px) {
+/* only phones drop the timeline sidebar. foldables (unfolded) and
+   split-screen windows are narrow but tall enough to keep it. */
+@media screen and (max-width: 599px), screen and (max-height: 499px) {
     :global(.is-webapp) .container {
         grid-template-columns: 1fr;
+    }
+}
+
+/* tighter widths keep the sidebar readable */
+@media screen and (min-width: 600px) and (max-width: 1024px) and (min-height: 500px) {
+    :global(.is-webapp) .container {
+        grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    }
+}
+
+/* dual-screen devices spanned across the hinge: workout on one screen,
+   timeline on the other. */
+@media (horizontal-viewport-segments: 2) {
+    :global(.is-webapp) .container {
+        grid-template-columns: env(viewport-segment-width 0 0) minmax(0, 1fr);
+        column-gap: calc(env(viewport-segment-left 1 0) - env(viewport-segment-right 0 0));
     }
 }

@@ -5,9 +5,16 @@
     animation: in 500ms cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
 }
 
-@media screen and (max-width: 1024px) {
+@media screen and (max-width: 599px), screen and (max-height: 499px) {
     :global(.is-webapp) .container {
         display: none;
+    }
+}
+
+/* foldables and split screen: the sidebar is narrow, so shrink it to fit */
+@media screen and (min-width: 600px) and (max-width: 1024px) and (min-height: 500px) {
+    :global(.is-webapp) .container {
+        --scale: 0.7;
     }
 }
 
